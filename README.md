@@ -79,3 +79,13 @@ This game is fiction. Health and financial mechanics are simplified for play, no
 ## License
 
 No license has been assigned to the repository. Copyright remains with the owner; contributions require permission.
+
+## The world moves without you
+
+Click **Age up** and the journal fills with small and big background happenings. Relatives can have children, older family members may die, classmates spread rumors, friends move, world news disrupts routines, and your practiced hobbies can attract opportunities. The story pool has **101 contextual passive scenes**, often with two different endings and some multi-year callbacks. It checks family and friend availability, age, school enrollment, money, health, hobbies, and retirement status before selecting. Childhood gets 1–2, later years 2–3, with additional job and family news when appropriate.
+
+There are **162 authored career incidents across 81 career paths**, plus an interactive workplace dilemma that can arise at a birthday. Skills and performance affect the resolution. The Work page also allows quitting your job or requesting a promotion once per year; some choices may end in warnings or dismissal. Career experiences and hobby milestones are stored with the save.
+
+The catalog lives in `assets/passive-life.js` and `assets/career-stories.js`. The gameplay hooks and persistence live in `assets/game.js`. No player account or backend is required.
+
+For local regression testing, run `python3 tests/ripples_smoke.py` with Playwright/Chromium installed, plus the existing smoke tests.

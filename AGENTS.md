@@ -40,3 +40,11 @@ Prefer small, reviewable commits and explain any change to story probabilities o
 - Gameplay from 12 through 100+ should mix mundane, wonderful, brutal-but-age-suitable, silly and bizarre outcomes. Avoid making every choice the "right choice". Do not make loss or medical diagnosis a punchline; humorous circumstances can surround them.
 - Activities should have concrete stakes. Skill exhibitions can yield trophies, pay (adults) and status; the annual limit prevents farming. Career days offer workplace dilemmas. Retiring manually unlocks from 55; residence choices unlock at 62.
 - Keep `docs/ARCHITECTURE.md`, README and `.github/workflows/pages.yml` current when adding scripts. Run `python3 tests/later_smoke.py` after existing smoke tests. Work through aging, multiple generations, illness, senior homes, and all save types, rather than validating by event counts alone.
+
+## Passive-life and careers update
+- `assets/passive-life.js` stores authored, conditional ambient journal moments for year transitions. `assets/career-stories.js` stores two distinct scenarios for all current 81 careers. Keep their IDs stable across saves.
+- `annualLifeRipples()` runs once per `ageUp`, after finance, school, family, and aging changes; don't run it on render or loading a saved game. It writes 2–3 journal entries at most (1–2 at infant age), plus relevant family/job news. It must not spend energy.
+- Gate stories on living NPCs, actual pets/jobs/school and existing skills; placeholders must expand; avoid implying a person died, moved, was born or was injured unless state or log really reflects it.
+- Skill milestones, context-specific hobby outcomes, quarterly job incidents, annual career dilemmas, promotion requests and quitting use additive keys `passiveSeen`, `skillMilestones`, `careerScenesSeen`, `careerHistory`, `lastPromotionRequestYear`, and `rippleCount`. Reset personal keys on inheritance. Do not reset family history.
+- `tests/ripples_smoke.py` uses Playwright to cover aging, skill effects, job situations, firing/quit/promotion menu and save data on four widths. Run it with all existing smoke tests, and validate the new scripts with `node --check`.
+- Journal news must sound like *things that happened*, not generic skill-toasts, analytics or promises about engagement. Employment consequences should be plausible and skill-dependent.

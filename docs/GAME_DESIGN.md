@@ -42,3 +42,9 @@ Teen and adult years should be capable of wonderful, awful, dull, hilarious and 
 The post-childhood catalog (`assets/later-life.js`) adds 80 everyday/conditional stories and five multi-year arcs. Consequences include finances, grades, legal trouble, relationship bonds, skills, health, reputation, popularity and future callbacks. The old event library remains available and should not become invisible beneath the new material. Player activities include named skill showcases with prizes/trophies, actual choices during work shifts, sleepovers and healthcare. Random success rates are affected by relevant skills and circumstances, not just a coin toss.
 
 The Journal and Home show a state-based life chapter, not a static instructions panel. These recaps are written from current family relationships, career, town, recent events and health; events should be memorable enough for the recap to say something specific. Prior character generations are kept in the existing family tree and history.
+
+## Background life, accomplishments, and work
+
+A year should not feel empty just because the player didn't click on anything. Ambient stories should be a mix of mundane, cruel, chaotic, lucky and unexpectedly touching; 2–3 small entries at most per ordinary year keeps the journal readable. Major losses and births should be grounded in actual character records. Earlier promises can return later with specific recollections and titles.
+
+A high skill should unlock distinct opportunities and raise the chance of succeeding at job crises. Practicing may bring mishaps, surprising compliments, minor awards or local notice, not merely another skill number. Employment includes 2+ role-specific situations per career, warnings, dismissal, asking for promotion, and quitting with different social consequences. Stay PG-13 and avoid sensationalizing serious illness or bereavement.

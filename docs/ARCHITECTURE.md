@@ -43,3 +43,15 @@ Illnesses are **simplified game systems**, not medically accurate diagnosis advi
 The home/journal chapter draws a short, state-based recap from named family, grade/career, illness, and recent saved history. This text is rendered with escaping. Activities expose contests, visits and careers through the existing action dispatcher.
 
 The deployment validates all standalone JS scripts, as well as `tests/smoke.py`, `tests/browser_smoke.py`, and `tests/later_smoke.py` in local QA. Because the last two need Chromium, they are not part of the minimal GitHub Pages deployment job.
+
+## Ambient years and career-specific incidents
+
+`index.html` loads `assets/passive-life.js` (101 contextual scene entries) and `assets/career-stories.js` (81 careers with 2 distinct authored incidents each) before the game engine. Both are plain JS data objects on `window`; no network calls or build tooling are needed.
+
+The game engine runs `annualLifeRipples()` *only* from `ageUp()`, after the ordinary annual finance, school, world and family processing. It selects 1–2 newborn/toddler or 2–3 older passive diary moments, with at least a five-year cooldown per scene and an alternative text/outcome on repeat. `rippleGate` checks living NPCs, enrollment, actual financial and personal conditions; interpolations escape via the existing log rendering. Pregnancies in the player's own household remain under the original one-child-per-year constraint; the separate background new-sibling event checks parental ages and family size.
+
+`annualSkillMilestones` logs grounded rewards when new tiers are crossed; `outcomeModal` adds some context-dependent mishaps or memorable hobby moments without creating a second modal. Work incidents are skill-checked and can yield warnings; occasional annual career choice modals offer doing the work, getting help, or irresponsibly shirking it. A result modal then resumes the normal yearly interactive event. The Work page exposes a voluntary quit and one promotion request per year.
+
+Additive state: `passiveSeen`, `skillMilestones`, `careerScenesSeen`, `careerHistory`, `lastPromotionRequestYear`, `rippleCount`, `lastActionRequested`. These require no migration, initialize on first use, and reset per character when the player inherits a new generation. Existing `promises` store several later echo callbacks; custom titles/icons are honored without disrupting older promises. No existing save key changed.
+
+QA: `tests/ripples_smoke.py` exercises the passes, story interpolation, skill milestones, career choices, promotion/quit, localStorage and narrow layouts. The GitHub Pages workflow runs static validation; Playwright tests are local.
