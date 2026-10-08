@@ -34,3 +34,11 @@ Skill checks change likelihood of outcomes, not just progress bars. Alignment re
 
 ## Backlog ideas
 Deeper interactive skill-based mini-stories; authored recurring rivals and families; project and instrument equipment; more custom DiceBear variation controls mapped to exact style variants; optional local portrait generation; true episodic story editor; code/data separation and more automated outcome assertions.
+
+## Later-life expansion (October 2026)
+
+Teen and adult years should be capable of wonderful, awful, dull, hilarious and strange outcomes. The player may study hard, trick a rival, take the blame for a friend, start a disastrous side business, care for an ill relative, get fired, or begin a surprise second career. Senior years include choosing retirement, changing living arrangements, friendships and rivalries in retirement communities, projects, community events and occasional bizarre mishaps. Loss and illness should be present but never graphically depicted or mocked.
+
+The post-childhood catalog (`assets/later-life.js`) adds 80 everyday/conditional stories and five multi-year arcs. Consequences include finances, grades, legal trouble, relationship bonds, skills, health, reputation, popularity and future callbacks. The old event library remains available and should not become invisible beneath the new material. Player activities include named skill showcases with prizes/trophies, actual choices during work shifts, sleepovers and healthcare. Random success rates are affected by relevant skills and circumstances, not just a coin toss.
+
+The Journal and Home show a state-based life chapter, not a static instructions panel. These recaps are written from current family relationships, career, town, recent events and health; events should be memorable enough for the recap to say something specific. Prior character generations are kept in the existing family tree and history.

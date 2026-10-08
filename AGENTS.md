@@ -32,3 +32,11 @@ Every new event should have a plausible trigger and age range, a specific openin
 
 ## Collaboration
 Prefer small, reviewable commits and explain any change to story probabilities or economics. Document current behavior honestly; do not claim exhaustive test coverage because one scenario ran. Never overwrite a live save for convenience.
+
+## Later-life chapter system
+- `assets/later-life.js` defines 80 additional teen, young-adult, adult, senior and grief scenes, five multi-year arcs, 39 new career options, 11 simplified illnesses and four retirement-living options. Keep event IDs stable.
+- `assets/game.js` integrates this catalog after earlier event rewrites. `s.laterArcs`, `s.illnesses`, `s.pension`, `s.retirementHome`, and `s.masteries` are additive save keys; preserve them during loading, export/import and inheritance resets.
+- Arc chapters must *actually* pick up remembered opening choices, not just reuse the same generic sequel paragraph. Model both luck and skill, including meaningful failure.
+- Gameplay from 12 through 100+ should mix mundane, wonderful, brutal-but-age-suitable, silly and bizarre outcomes. Avoid making every choice the "right choice". Do not make loss or medical diagnosis a punchline; humorous circumstances can surround them.
+- Activities should have concrete stakes. Skill exhibitions can yield trophies, pay (adults) and status; the annual limit prevents farming. Career days offer workplace dilemmas. Retiring manually unlocks from 55; residence choices unlock at 62.
+- Keep `docs/ARCHITECTURE.md`, README and `.github/workflows/pages.yml` current when adding scripts. Run `python3 tests/later_smoke.py` after existing smoke tests. Work through aging, multiple generations, illness, senior homes, and all save types, rather than validating by event counts alone.

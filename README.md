@@ -1,84 +1,81 @@
 # 🌱 Little Life
 
-A choice-driven life simulator where the mundane, the embarrassing, and the downright strange can all change a family story. Start at birth or age 12, grow skills, make friends and enemies, get jobs, adopt pets, raise a family, and pass your story to the next generation.
+**[Play Little Life](https://timothyallgood.github.io/LittleLife/)** · [Report a bug](https://github.com/TimothyAllgood/LittleLife/issues)
 
-**Play:** once GitHub Pages is enabled, the intended URL is `https://timothyallgood.github.io/LittleLife/`.
+An iPad-first, teen-friendly, choose-your-own-mess life simulator. Start as a baby or a teenager, make friends and enemies, stumble through jobs, create things, grow old, and leave behind a family full of stories. Some lives end up wealthy; others end up as an accidental teapot influencer. It's a game, not a career-coaching application.
 
-## A childhood that gets messy
+There are no ads, accounts, in-app purchases, sexual content, or graphic violence. Difficult things happen—bullying, illness, injuries, crime, family disagreements, financial trouble, and loss—but the presentation aims for an older-kid/teen audience.
 
-The childhood expansion adds 58 different scenes involving lost dogs, bullies, school competitions, neighbors, bicycle dares, family worries, embarrassing parties, petty crimes, missing keepsakes and stranger things. There are also five three-part stories: a library key, a bike-racing rival, a questionable garage band, the search for a lost dog, and a closing arcade. Your first decision changes the dialogue in the later chapters, and a final callback can turn up years afterward. Success, injury, friendship, reputation, grades, money and other consequences depend on choices and skills.
+## Playing
 
-The **🎲 Give me a name** button draws from a larger pool of first and surnames. DiceBear portraits use explicit hair styles, eye colors, eyebrows, mouths, and accessories where the Adventurer renderer supports them; the appearance seed is preserved across aging and saves.
+Open the game above in Safari or another modern browser. Make a character and play through your life one year at a time. Most years you have several chances to do things *before* aging up. Choices change skills, finances, relationships, reputation, your storybook, and sometimes events years later.
 
-## What is in the game?
+Things to try:
 
-- Hundreds of age-aware events with choices, skill checks, consequences, and longer story arcs.
-- Relationships, friendships, rivalries, family generations and a family tree.
-- School, clubs, grades, college, careers, money, housing, travel, vehicles, injuries and legal consequences.
-- D&D, gaming, writing, music, art, filmmaking, and other hobbies with recorded projects.
-- Rare, weird mystery storylines, with much lower occurrence than everyday incidents.
-- Illustrated **DiceBear Adventurer** avatars with persistent looks, a baby-to-senior life progression, and theme preferences saved locally.
-- Age-appropriate tone, including difficult or negative outcomes without graphic detail.
+- **Babyhood and childhood:** Family, school, clubs, friendships, pranks, mysteries, and five multi-year childhood storylines.
+- **Teen years:** Sleepovers, food fights, tricky friendships, rivalries, exams, bands, gaming, competitions and graduation.
+- **Adulthood:** Relationships, children, college, moving, bills, unusual job opportunities, work crises, illness, difficult decisions, and new multi-year mysteries.
+- **Later years:** Retire when you're ready (from age 55), choose your home, hang out with memorable neighbors, foster pets, get into ridiculous adventures, or begin an unexpected second career.
+- **Skills:** Practice hobbies and take them to a showcase. Skill and confidence affect outcomes; success can earn trophies, money, popularity, and career opportunities. Pick an instrument, write a story, make something, play D&D, or enter a game tournament.
+- **Generations:** When your character dies, choose a living child to continue the family. The family tree and the histories of earlier lives remain.
 
-## Run locally
+Story outcomes are intentionally unpredictable. Even a good choice can fail, and being mean sometimes appears to work—at least until it catches up with you.
 
-This is currently a dependency-free static web app. Serve it using any local HTTP server:
+## Saves, portraits and offline use
+
+Progress saves to **local storage** in that browser. Keep backups through **Settings → Export family save**, particularly before clearing browser data or switching devices; import backups from Settings. Existing version-2 Little Life saves load without needing to start over. Light/dark preference saves independently.
+
+Portraits use **DiceBear Adventurer** SVGs from `https://api.dicebear.com` with a persistent, non-identifying character seed. A fallback appears without the connection. Game logic, data, layout and saves are local to the static site. No account is required.
+
+## Development
+
+Little Life is deliberately dependency-free: standard HTML, CSS and browser JavaScript. You do **not** need Node packages, a backend, a database, or a build step.
+
+Clone the repository and serve the folder with any static file server. For example:
 
 ```sh
 python3 -m http.server 8000
-# Then visit http://localhost:8000/
 ```
 
-The game logic and event system do not require an account or server. **Character portraits are fetched from DiceBear**, so portrait images require an internet connection; the app displays a small placeholder when the API is unreachable. Other game content remains available offline after the files are loaded. No advertising or telemetry code is included.
+Then open `http://localhost:8000`.
 
-## Repository layout
+The HTML entrypoint is `index.html`. Scripts load in the following order:
 
-```text
-index.html                 Small HTML shell and entry point
-assets/styles.css          UI and responsive light/dark design
-assets/game.js             Game state, rules, activity and event engine
-assets/legacy-rewrites.js  Reworked text and titles for the original 92 events
-assets/legacy-outcomes.js  Individual outcomes for 90 early events (two have bespoke event code)
-assets/childhood.js        58 childhood events and five multi-year chapter stories
-.github/workflows/pages.yml  GitHub Pages deploy action
-docs/GAME_DESIGN.md       Gameplay direction and tone
-docs/ARCHITECTURE.md      Data model, save system, DiceBear mapping and testing
-AGENTS.md                 Contributor/AI-agent guardrails
-```
+1. `assets/legacy-rewrites.js` — revised copy for the original event intros.
+2. `assets/childhood.js` — childhood one-offs and five long-running arcs.
+3. `assets/later-life.js` — teen/adult/senior scenes and arcs, jobs, illnesses, retirement-home catalog.
+4. `assets/legacy-outcomes.js` — rewritten results of original choices.
+5. `assets/game.js` — game state, event resolution, UI rendering, save/load, additional gameplay and hooks.
 
-## Testing
+Styles are in `assets/styles.css`. Current code intentionally retains one large game script; modularize incrementally and preserve old save keys. See [architecture](docs/ARCHITECTURE.md), [game design](docs/GAME_DESIGN.md), and [agent instructions](AGENTS.md).
+
+## Tests
+
+Run these before publishing:
 
 ```sh
 node --check assets/game.js
+node --check assets/childhood.js
+node --check assets/later-life.js
 node --check assets/legacy-rewrites.js
 node --check assets/legacy-outcomes.js
-node --check assets/childhood.js
 python3 tests/smoke.py
 python3 tests/browser_smoke.py
+python3 tests/later_smoke.py
 ```
 
-The browser smoke suite needs Python Playwright and a local Chromium installation. See `docs/ARCHITECTURE.md` for browser-testing recommendations. In particular, check avatar customization in both themes, an early-childhood event, a teen event, career progression, and save export/import before merging gameplay changes.
+The Playwright tests require Python `playwright` and locally installed Chromium (`/usr/bin/chromium`). They exercise avatar customization, dark mode, branching childhood and later-life arcs, illnesses, jobs, competitions, retirement and small-screen layout. Browser QA complements rather than replaces actual full-life playtesting.
 
-## Save data & privacy
+## GitHub Pages
 
-Game progress is kept in your browser's `localStorage`, not in an online account. The game also supports export and import. Changing origin (for example, moving from a downloaded HTML file to GitHub Pages) does **not** migrate local storage automatically: **export the old save, then import it at the new URL**.
+Every push to `main` runs `.github/workflows/pages.yml`. It validates JS and the static source before uploading to GitHub Pages. In repository Settings → Pages, set Source to **GitHub Actions**. Pages supports the nested `/LittleLife/` path because all script/style URLs are relative.
 
-DiceBear receives a generated appearance seed and style choices to render the portrait. It does *not* receive player names from this integration. To work without DiceBear entirely, the app shows an emoji fallback; a future build could bundle assets or use a local renderer.
+## Writing stories
 
-## GitHub Pages setup
+The north star is the range and playfulness of BitLife without its adult material. Give each event a particular incident, person or problem. Include options that are kind, selfish, misguided, selfish-but-funny, neutral, or occasionally awful—and make different outcomes genuinely different. Avoid repetition, lecture-like mechanics copy, generic “you learn a valuable lesson” endings, and UI jargon that sounds like a product pitch. Follow-ups should remember what the player actually did.
 
-A deploy workflow is provided at `.github/workflows/pages.yml` and publishes the root directory of `main`. Repository owner must enable **Settings → Pages → Build and deployment → GitHub Actions**. Make sure Actions workflows are allowed in repository settings. For **private repositories**, check that your GitHub plan supports private Pages publishing. A public repository is the alternative, if you want the source visible to everyone. The workflow alone does not turn Pages on.
+This game is fiction. Health and financial mechanics are simplified for play, not advice for real decisions.
 
-Once the Pages deployment succeeds, the site should be accessible at `https://timothyallgood.github.io/LittleLife/` (case-sensitive repository path). Check the Pages settings panel for the actual URL and status.
+## License
 
-## Content direction
-
-The game is built for early teens, not strictly for young children. Consequences are allowed: embarrassment, losing friends, being injured, punishment, failure, legal problems, and even sad family moments. Avoid explicit sex, gratuitous gore, slurs, and instructional crime detail. Not every life should be easy, and not every joke should sound like a greeting card. See `docs/GAME_DESIGN.md`.
-
-## Avatar credit
-
-Portraits use [DiceBear's Adventurer style](https://www.dicebear.com/styles/adventurer/) by **Lisa Wischofsky**, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). DiceBear is a separate third-party service. This project is not affiliated with BitLife, ReLife, or DiceBear.
-
-## Status
-
-Playable evolving prototype. Most content is still in one JavaScript game engine for save compatibility. The 92 earliest event *prompts and titles* were editorially rewritten; their existing branching outcomes are preserved to avoid breaking consequence logic. Outcome-by-outcome copyediting, a fully local avatar renderer, and further code modularization remain potential follow-up work.
+No license has been assigned to the repository. Copyright remains with the owner; contributions require permission.

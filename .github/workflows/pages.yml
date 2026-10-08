@@ -27,13 +27,12 @@ jobs:
         run: |
           node --check assets/game.js
           node --check assets/legacy-rewrites.js
-          node --check assets/legacy-outcomes.js
           node --check assets/childhood.js
+          node --check assets/later-life.js
+          node --check assets/legacy-outcomes.js
           python3 tests/smoke.py
       - name: Configure Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:

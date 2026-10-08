@@ -9,9 +9,10 @@ js=(root/'assets/game.js').read_text()
 rewrites=(root/'assets/legacy-rewrites.js').read_text()
 childhood=(root/'assets/childhood.js').read_text()
 outcomes=(root/'assets/legacy-outcomes.js').read_text()
-assert all((root/p).is_file() for p in ['index.html','assets/styles.css','assets/game.js','assets/legacy-rewrites.js','assets/childhood.js','assets/legacy-outcomes.js','README.md','AGENTS.md'])
+later=(root/'assets/later-life.js').read_text()
+assert all((root/p).is_file() for p in ['index.html','assets/styles.css','assets/game.js','assets/legacy-rewrites.js','assets/childhood.js','assets/later-life.js','assets/legacy-outcomes.js','README.md','AGENTS.md'])
 assert 'assets/styles.css' in html and 'assets/legacy-rewrites.js' in html and 'assets/game.js' in html
-assert html.index('legacy-rewrites.js') < html.index('childhood.js') < html.index('legacy-outcomes.js') < html.index('game.js')
+assert html.index('legacy-rewrites.js') < html.index('childhood.js') < html.index('later-life.js') < html.index('legacy-outcomes.js') < html.index('game.js')
 assert 'https://api.dicebear.com/10.x/adventurer/svg' in js
 assert 'function dicebearUrl' in js and 'function avatar(' in js
 assert '<svg' not in js[js.index('function avatar('):js.index('const me=()')]
@@ -24,6 +25,8 @@ assert set(rewrite_ids)==set(old_ids), (len(rewrite_ids),set(old_ids)-set(rewrit
 assert len(re.findall(r'\{id:\x27[^\x27]+\x27,age:',childhood))>=58
 assert len(re.findall(r'\{id:\x27[^\x27]+\x27,age:\[\d+,\d+\],icon:\x27[^\x27]+\x27,acts:',childhood))==5
 assert len(re.findall(r'^ [a-z]+:\s*\[',outcomes,re.M))>=90
+assert 'LITTLE_LIFE_LATER' in later and "const scenes=[" in later and "const arcs=[" in later and "const illnesses=[" in later
+assert 'function retirementHomes' in js and 'function medicalVisit' in js and 'function skillShowcase' in js
 assert 'eyesColor' in js and 'hairVariant' in js and 'data-setup=\"randomName\"' in js
 assert 'Uses confidence' not in js and 'Your choices shape later events' not in js and 'consequences can stick' not in js
 assert 'function childhoodSequelText' in js and 'firstChoice' in js

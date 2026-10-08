@@ -175,3 +175,20 @@ html[data-theme="dark"] .dicebear-frame{background:#493d59}
 @media(max-width:360px){.look-grid{grid-template-columns:1fr}.logo h1{font-size:19px}.modal{padding:14px 11px}}
 html[data-theme="dark"] .new-card .name-dice{background:#4b3953!important;color:#ffedf9!important;border-color:#bd8aaa!important}
 html[data-theme="dark"] .look-swatch.active::after{color:white}
+
+/* Life chapters read like pages from a scrapbook, not another stats widget. */
+.ll-chapter{position:relative;overflow:hidden;background:linear-gradient(140deg,#fffdf7,#f8f3fb 70%);border:1px solid #e9dfe5;box-shadow:0 3px 18px rgba(67,49,92,.035)}
+.ll-chapter:before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(#e9bc8c,#c9a9f5)}
+.ll-chapter .title{font-family:Georgia,'Times New Roman',serif;font-size:clamp(22px,3vw,30px);line-height:1.15}
+.ll-chapter .lead{font-size:15px;line-height:1.75;max-width:68ch;color:#555366}
+.ll-chapter-bits{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.ll-chapter-bits span{display:inline-flex;padding:4px 9px;border:1px solid #e5dfe7;background:rgba(255,255,255,.54);border-radius:7px;font-size:12px}
+.ll-memory{display:flex;gap:10px;align-items:baseline;justify-content:space-between;border-bottom:1px dashed #e7dee6;padding:8px 0;margin:0}
+.ll-memory b{font-size:13px;font-weight:650;min-width:0}
+.ll-memory small{color:var(--muted);white-space:nowrap;font-size:11px}
+.ll-life-now .btn{margin-top:11px;margin-right:6px}
+html[data-theme="dark"] .ll-chapter{background:linear-gradient(135deg,#282535,#1d2030);border-color:#464258}
+html[data-theme="dark"] .ll-chapter .lead{color:#d6d3df}
+html[data-theme="dark"] .ll-chapter-bits span{border-color:#525065;background:#303043;color:#e9e5f5}
+html[data-theme="dark"] .ll-memory{border-color:#494558}
+@media(max-width:500px){.ll-chapter{padding:16px}.ll-chapter .lead{font-size:14px;line-height:1.65}.ll-memory b{font-size:12px}.ll-chapter-bits span{font-size:11px}}

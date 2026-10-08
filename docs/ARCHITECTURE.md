@@ -29,3 +29,17 @@ Automated static smoke test (`python3 tests/smoke.py`) and browser regression su
 - The game engine is monolithic; modularization should not risk lost save compatibility.
 - Remote portrait images are not cached as local assets; in offline use the fallback renders.
 - Existing local saves do not automatically follow users between browser origins or Safari and the Files app.
+
+## Later-life events and opportunities (October 2026)
+
+`assets/later-life.js` is catalog data. It holds 80 stage/context scenes with explicit success and failure, five three-chapter storylines, 39 extra jobs, illness definitions and living options. It is loaded before `assets/game.js`, which registers stage-appropriate events into the existing resolver and wraps existing hooks (rather than replacing save formats).
+
+Each arc keeps `{step, firstChoice, firstLabel, firstYear, nextYear, finished}` under `s.laterArcs[arc.id]`. Due chapters have priority when an annual event is selected. Finishing an arc queues a future echo in the existing `s.promises` system. One-off scenes remain non-repeatable for each playable character, keyed in `s.eventsSeen`.
+
+New state is lazily initialized in `ensureWorld`: `illnesses`, `laterArcs`, `masteries`, `retirementHome`, `retirementFriends`, `pension`, `retirementYear`, `lastRetirementMoveYear`, `lastShowcaseYear`, and related flags. Inheritance clears character-specific attributes while retaining the family's shared history. Existing players retain all original save keys and data.
+
+Illnesses are **simplified game systems**, not medically accurate diagnosis advice. Per-year checks are relatively rare. Symptoms can affect health; a player can spend an activity and money on care. Older players can retire early; fixed pension income and retirement-home charges apply in annual life processing. Deaths receive age-appropriate, non-graphic causes, and the chosen child can inherit the family story.
+
+The home/journal chapter draws a short, state-based recap from named family, grade/career, illness, and recent saved history. This text is rendered with escaping. Activities expose contests, visits and careers through the existing action dispatcher.
+
+The deployment validates all standalone JS scripts, as well as `tests/smoke.py`, `tests/browser_smoke.py`, and `tests/later_smoke.py` in local QA. Because the last two need Chromium, they are not part of the minimal GitHub Pages deployment job.

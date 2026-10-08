@@ -852,7 +852,7 @@ function adoptPet(kind=null,name=null){if(s.pets.filter(p=>!p.died).length>=3){s
 function changeBond(which,delta,ctx){let id=ctx?.[which+'Id'];if(which==='kid')id=ctx?.kidId;if(which==='partner')id=ctx?.partnerId;if(which==='friend')id=ctx?.friendId;const p=byId(id);if(p)relate(p,delta);}
 function eventOptions(){let current=events.filter(e=>(e.period===stage(s.age).id||(e.period==='context'&&s.age>=8))&&e.when(s));if(!current.length)return null;const priorities=current.filter(e=>e.priority&&(s.eventsSeen[e.id]||0)===0);if(priorities.length&&prob(.75))return pick(priorities);current.sort((a,b)=>(s.eventsSeen[a.id]||0)-(s.eventsSeen[b.id]||0));const least=s.eventsSeen[current[0].id]||0;const group=current.filter(e=>(s.eventsSeen[e.id]||0)<=least&&e.id!==s.flags.lastEventId);return pick(group.length?group:current.filter(e=>e.id!==s.flags.lastEventId).length?current.filter(e=>e.id!==s.flags.lastEventId):current);}
 function showAnnualEvent(){if(s.legal?.jailYears>0){s.flags.bonusEventPending=false;prisonEvent();return;}const ev=eventOptions();if(!ev){openModal({icon:'🎂',title:'A quiet year',text:'Some years are full of excitement, and some are made of little moments. Both matter.',choices:[{label:'Keep going',run:()=>{}}]});return}const ctx=context();s.eventsSeen[ev.id]=(s.eventsSeen[ev.id]||0)+1;s.flags.lastEventId=ev.id;save();openModal({icon:ev.icon,title:ev.title,text:fill(ev.text,ctx),nonDismiss:true,choices:ev.choices.map((c,i)=>({label:fill(c.label,ctx),run:()=>resolveEvent(ev,c,ctx)}))});}
-function resolveEvent(ev,c,ctx){if(c.v3){ensureExtras();const score=c.skill==='grades'?s.grades:c.skill==='smarts'?s.stats.smarts:c.skill==='confidence'?s.stats.confidence:c.skill?s.skills[c.skill]||0:50;let chance=c.chance??(c.skill?Math.max(.12,Math.min(.91,.52+(score-(c.difficulty??45))*.009)):.62);if(s.injury&&['sports','health'].includes(c.skill))chance-=.21;if(s.legal.jailYears>0)chance-=.2;const success=prob(Math.max(.06,Math.min(.95,chance))), outcome=success?c.good:c.bad;const base=c.common||{},effects=success?(c.ok||{}):(c.no||{});consequences(base,ctx);consequences(effects,ctx);if(c.flag)s.flags[c.flag]=true;if(success&&c.flagGood)s.flags[c.flagGood]=true;if(!success&&c.flagBad)s.flags[c.flagBad]=true;const message=fill(outcome,ctx);addLog(ev.icon,ev.title,`${fill(c.label,ctx)} — ${message}`);save();render();openModal({icon:success?'🎯':'🧩',title:success?'Well, look at that.':'Oh. That happened.',text:message,choices:[{label:s.flags.bonusEventPending?'There’s more to this year →':'Back outside →',run:()=>{if(s.flags.bonusEventPending){s.flags.bonusEventPending=false;showAnnualEvent();}}}]});return;}const result=Math.random(),isTwist=result<.13,isGood=result>=.13&&result<.77;const outcome=isTwist?c.twist:isGood?c.good:c.bad;statChange(c.fx||{});if(isGood)statChange({confidence:2,happiness:2});else if(!isTwist)statChange({stress:3,confidence:-1});else statChange({creativity:2,happiness:2});if(c.bondTarget)changeBond(c.bondTarget,c.bond||5,ctx);if(c.newFriend&&isGood)makeFriend();if(c.meetPartner&&isGood)meetNewPartner();if(c.adoptPet&&isGood)adoptPet();if(c.promote&&isGood)promote('event');if(c.flag)s.flags[c.flag]=true;if(c.cash)statChange({cash:c.cash});if(c.follow){s.promises.push({year:s.year+c.follow.years,text:fill(c.follow.text,ctx),effects:c.follow.effects,source:ev.title});}const consequence=fill(outcome,ctx);s.turn++;addLog(ev.icon,ev.title,`${fill(c.label,ctx)} — ${consequence}`);save();render();openModal({icon:isTwist?'🌀':isGood?'✨':'🌦️',title:isTwist?'Nobody saw that coming.':isGood?'Well, look at that.':'Not quite the plan.',text:consequence,choices:[{label:s.flags.bonusEventPending?'There’s more to this year →':'Back outside →',run:()=>{if(s.flags.bonusEventPending){s.flags.bonusEventPending=false;showAnnualEvent();}}}]});}
+function resolveEvent(ev,c,ctx){if(c.v3){ensureExtras();const score=c.skill==='grades'?s.grades:c.skill==='smarts'?s.stats.smarts:c.skill==='confidence'?s.stats.confidence:c.skill&&c.skill in s.stats?s.stats[c.skill]:c.skill?s.skills[c.skill]||0:50;let chance=c.chance??(c.skill?Math.max(.12,Math.min(.91,.52+(score-(c.difficulty??45))*.009)):.62);if(s.injury&&['sports','health'].includes(c.skill))chance-=.21;if(s.legal.jailYears>0)chance-=.2;const success=prob(Math.max(.06,Math.min(.95,chance))), outcome=success?c.good:c.bad;const base=c.common||{},effects=success?(c.ok||{}):(c.no||{});consequences(base,ctx);consequences(effects,ctx);if(c.flag)s.flags[c.flag]=true;if(success&&c.flagGood)s.flags[c.flagGood]=true;if(!success&&c.flagBad)s.flags[c.flagBad]=true;const message=fill(outcome,ctx);addLog(ev.icon,ev.title,`${fill(c.label,ctx)} — ${message}`);save();render();openModal({icon:success?'🎯':'🧩',title:success?'Well, look at that.':'Oh. That happened.',text:message,choices:[{label:s.flags.bonusEventPending?'There’s more to this year →':'Back outside →',run:()=>{if(s.flags.bonusEventPending){s.flags.bonusEventPending=false;showAnnualEvent();}}}]});return;}const result=Math.random(),isTwist=result<.13,isGood=result>=.13&&result<.77;const outcome=isTwist?c.twist:isGood?c.good:c.bad;statChange(c.fx||{});if(isGood)statChange({confidence:2,happiness:2});else if(!isTwist)statChange({stress:3,confidence:-1});else statChange({creativity:2,happiness:2});if(c.bondTarget)changeBond(c.bondTarget,c.bond||5,ctx);if(c.newFriend&&isGood)makeFriend();if(c.meetPartner&&isGood)meetNewPartner();if(c.adoptPet&&isGood)adoptPet();if(c.promote&&isGood)promote('event');if(c.flag)s.flags[c.flag]=true;if(c.cash)statChange({cash:c.cash});if(c.follow){s.promises.push({year:s.year+c.follow.years,text:fill(c.follow.text,ctx),effects:c.follow.effects,source:ev.title});}const consequence=fill(outcome,ctx);s.turn++;addLog(ev.icon,ev.title,`${fill(c.label,ctx)} — ${consequence}`);save();render();openModal({icon:isTwist?'🌀':isGood?'✨':'🌦️',title:isTwist?'Nobody saw that coming.':isGood?'Well, look at that.':'Not quite the plan.',text:consequence,choices:[{label:s.flags.bonusEventPending?'There’s more to this year →':'Back outside →',run:()=>{if(s.flags.bonusEventPending){s.flags.bonusEventPending=false;showAnnualEvent();}}}]});}
 function maturePeople(){const who=me(),notices=[];for(const p of s.people){if(p.id===who.id||p.died)continue;const a=ageOf(p);if(a>60){const chance=a<72?.002:a<80?.011:a<86?.024:a<92?.062:a<98?.13:a<104?.29:.56;if(prob(chance)){p.died=s.year;notices.push(p);}}}for(const p of notices){addLog('🕊️','Remembering '+p.name,`${p.name} passed away at age ${ageOf(p)}. Your family remembers the moments you shared.`,'loss');if(s.partnerId===p.id){s.partnerId=null;s.married=false;}if(isFamily(who,p)||s.friendIds.includes(p.id)){statChange({happiness:-11,stress:8});}}
 // Grown children can make their own lives: spouses, children, more branches of the family tree.
 for(const p of [...s.people]){if(p.died||p.id===who.id||p.kind==='friend'||p.kind==='romance')continue;const a=ageOf(p);if(a>=23&&a<=42&&(p.parents||[]).length>0&&!p.spouseId&&prob(.085)){const mate=makePerson(nameNotUsed(),s.year-a+r(7)-3,[],'family');p.spouseId=mate.id;mate.spouseId=p.id;addLog('💞','Family news',`${p.name} and ${mate.name} became partners.`,'family');}if(a>=24&&a<=40&&p.spouseId&&children(p).length<3&&prob(.055)){const kid=makePerson(nameNotUsed(p.name.includes(' ')?p.name.split(' ').slice(-1)[0]:pick(surnames)),s.year,[p.id,p.spouseId],'family',newLook(p.look,byId(p.spouseId)?.look));addLog('👶','A new branch',`${kid.name} was born to ${p.name}. Your family tree just grew!`,'family');}}
@@ -1444,5 +1444,210 @@ for(const e of events){if(!LL_ORIGINALS.has(e.id))continue;
   return SC(c.label,good,bad,{skill:null,common,ok,no});
  });
 }
+// LATER LIFE: teen, adult and senior stories share the same saved people, stats and event history.
+const LATER=window.LITTLE_LIFE_LATER||{scenes:[],arcs:[],jobs:[],illnesses:[],homes:[]};
+for(const j of LATER.jobs)if(!careers.some(c=>c.id===j.id))careers.push(j);
+const llLaterEnsure=ensureWorld;
+ensureWorld=function(){llLaterEnsure();if(!s)return;s.illnesses??=[];s.laterArcs??={};s.masteries??={};s.retirementHome??='own';s.retirementFriends??=[];s.pension??=0;s.lastShowcaseYear??=-1;s.lastMedicalYear??=-1;s.retirementYear??=null;s.legacyHighlights??=[];};
+function laterAvailable(e){
+ const g=e.gate;
+ if(g==='recentLoss')return s.age>=13&&s.history.some(h=>h.kind==='loss'&&h.who===s.playerId&&s.year-h.year<=2);
+ if(g==='sibling')return siblings(me()).some(alive);
+ if(g==='kid')return children(me()).some(alive);
+ if(g==='parent')return parents(me()).some(alive);
+ if(g==='partner')return !!partner()&&alive(partner());
+ if(g==='pet')return s.pets.some(p=>!p.died);
+ if(g==='job')return !!s.jobId;
+ if(g==='licensed')return !!s.flags.licensed;
+ if(g==='retirement')return s.retirementHome!=='own';
+ if(g==='musician')return s.skills.music>=18||['musician','dj','cruiseentertainer'].includes(s.jobId);
+ if(g==='developer')return s.skills.coding>=25||['developer','videogametester'].includes(s.jobId);
+ if(g==='chef')return s.skills.cooking>=26||['chef','baker','chocolatier'].includes(s.jobId);
+ if(g==='artist')return s.skills.art>=24||['artist','animator','signpainter'].includes(s.jobId);
+ if(g==='debate')return s.clubs.includes('debate')||s.skills.writing>=25;
+ return true;
+}
+for(const e of LATER.scenes){events.push(NE(e.id,e.period,e.icon,e.title,e.text,e.choices.map(c=>SC(c.label,c.good,c.bad,{skill:c.skill,difficulty:c.difficulty??49,ok:c.ok||{},no:c.no||{},common:c.common||{},flagGood:c.flagGood,flagBad:c.flagBad,flag:c.flag})),()=>laterAvailable(e) && (s.eventsSeen[e.id]||0)<1));}
+for(const arc of LATER.arcs){for(let n=0;n<3;n++){
+ const [title,text,choices]=arc.parts[n];const id='later_arc_'+arc.id+'_'+n;
+ events.push(NE(id,n===0?arc.period:'context',arc.icon,title,text,choices.map(c=>SC(c.label,c.good,c.bad,{skill:c.skill,difficulty:48,ok:c.ok||{},no:c.no||{},common:c.common||{}})),()=>{
+   const state=s.laterArcs?.[arc.id];
+   if(s.eventsSeen[id])return false;
+   return n===0?!state&&s.age>=arc.start[0]&&s.age<=arc.start[1] : state?.step===n&&s.year>=state.nextYear;
+ }));
+}}
+// Some outcomes change the actual household, not just the journal.
+const laterConsequences=consequences;
+consequences=function(fx={},ctx={}){laterConsequences(fx,ctx);if(fx.petName&&!s.pets.some(p=>p.name===fx.petName)&&s.pets.filter(p=>!p.died).length<3)adoptPet('dog',fx.petName);};
+// Existing code keeps picking low-frequency events; give already-started chapters priority.
+const laterEventOptions=eventOptions;
+eventOptions=function(){ensureWorld();const due=events.filter(e=>e.id.startsWith('later_arc_')&&!e.id.endsWith('_0')&&e.when(s));if(due.length&&prob(.89))return laterFork(pick(due));
+ const fresh=LATER.scenes.filter(e=>(e.period===stage(s.age).id||(e.period==='context'&&s.age>=8))&&laterAvailable(e)&&!s.eventsSeen[e.id]);
+ const starts=events.filter(e=>e.id.startsWith('later_arc_')&&e.id.endsWith('_0')&&e.when(s));
+ if(starts.length&&prob(.3))return pick(starts);
+ if(fresh.length&&prob(.68)){const e=pick(fresh);return events.find(x=>x.id===e.id);}
+ return laterFork(laterEventOptions());};
+function laterFork(ev){if(!ev?.id?.startsWith('later_arc_'))return ev;const arc=LATER.arcs.find(a=>ev.id.startsWith('later_arc_'+a.id+'_'));const state=arc&&s.laterArcs?.[arc.id];if(!state)return ev;
+ if(!ev.baseLaterText)ev.baseLaterText=ev.text;
+ const reminders={
+ schoolnewspaper:['The receipts you guarded are still in a folder under your bed.','You went public before you knew the whole story, and the school council has not forgiven you.'],
+ nightshift:['Len still talks about the neat inventory you made on your first shift.','Len has replaced the workshop fuse you blew, and insists you never touch the red switch again.'],
+ neighborhood:['Celia kept the welcome note you left by her door.','Celia remembers the day the city inspector arrived after your call.'],
+ oldradio:['Your notebook is full of strange programs nobody else has heard.','You still remember the look on the collector’s face when you sold that odd radio.'],
+ secondcareer:['The casting director still has your audition under your real name.','A few people on the film crew have discovered your very imaginative résumé.']
+ };
+ const line=(reminders[arc.id]||[])[state.firstChoice]||'Everyone remembers how this started.';
+ ev.text=line+' '+ev.baseLaterText;
+ return ev;
+}
+const laterResolve=resolveEvent;
+resolveEvent=function(ev,c,ctx){if(ev.id?.startsWith('later_arc_')){
+ const arc=LATER.arcs.find(a=>ev.id.startsWith('later_arc_'+a.id+'_'));
+ if(arc){const n=Number(ev.id.slice(('later_arc_'+arc.id+'_').length)),state=s.laterArcs[arc.id];
+ const next=n+1;
+ s.laterArcs[arc.id]={step:next,firstChoice:n===0?ev.choices.indexOf(c):(state?.firstChoice??0),firstLabel:n===0?c.label:state?.firstLabel,firstYear:state?.firstYear??s.year,nextYear:s.year+(n===2?0:arc.gap[0]+r(arc.gap[1]-arc.gap[0]+1)),finished:n===2};
+ if(n===2){s.promises.push({year:s.year+3+r(4),source:ev.title,text:`A letter arrives about the ${arc.parts[0][0].toLowerCase()} adventure. Someone kept an old photograph and still remembers that you chose to ${String(s.laterArcs[arc.id].firstLabel||'help').toLowerCase()}.`,effects:{happiness:6,confidence:4}});s.legacyHighlights.push({year:s.year,icon:arc.icon,title:ev.title});}
+ }}return laterResolve(ev,c,ctx);};
+// Recoverable illnesses and chronic conditions. Diagnoses are never treated as a punchline.
+function laterSicknessYear(){if(s.age<10)return;
+ s.illnesses=s.illnesses.filter(x=>x.years>0);
+ for(const x of s.illnesses){x.years--;if(x.years<=0){addLog('🌤️','Feeling better',`After dealing with ${x.name}, you are finally feeling like yourself again.`,'health');continue;}const healthLoss=x.harm>12?3:1;statChange({health:-healthLoss,stress:1});}
+ s.illnesses=s.illnesses.filter(x=>x.years>0);
+ if(s.illnesses.length>=2||!prob(s.age>=72?.17:s.age>=50?.105:.065))return;
+ const eligible=LATER.illnesses.filter(x=>s.age>=x.min&&!s.illnesses.some(y=>y.id===x.id));if(!eligible.length)return;
+ const weighted=eligible.flatMap(x=>Array(Math.max(1,x.weight)).fill(x));const cond=pick(weighted);
+ s.illnesses.push({...cond,years:cond.years});statChange({health:-Math.round(cond.harm*.55),stress:cond.harm>=14?7:3});
+ addLog('🩺',`Diagnosed with ${cond.name}`,`A doctor diagnoses ${cond.name}. There are treatments, and it may take time to feel better.`,'health');
+}
+function medicalVisit(){ensureWorld();if(s.energy<1)return say('No time left for an appointment this year.');const illness=s.illnesses[0];
+ if(!illness){openModal({icon:'🩺',title:'A checkup at Dr. Patel’s',text:'You can make an appointment, but nobody is going to give you a medal for having blood pressure.',choices:[{label:'Have a routine checkup · $120',disabled:s.cash<120,run:()=>{if(!energyCost())return;outcomeModal('🩺','The checkup',pick(['The nurse compliments your patience. Dr. Patel recommends a better sleep routine.','Your numbers look good. You celebrate with a sandwich and a walk.','Everything looks fine. Your only problem is finding your keys afterward.']),{cash:-120,health:7,stress:-3});}},{label:'Maybe later',run:()=>{}}]});return;}
+ openModal({icon:'🩺',title:`Dealing with ${illness.name}`,text:`${illness.years} year${illness.years===1?'':'s'} of symptoms remaining at the moment. Your savings: ${fmt(s.cash)}.`,choices:[
+ {label:`Follow the treatment plan · ${fmt(illness.cost)}`,disabled:s.cash<illness.cost,run:()=>{if(!energyCost())return;const good=prob(Math.min(.95,.60+(s.stats.smarts||0)*.003));if(good){illness.years=Math.max(0,illness.years-3);}else illness.years=Math.max(0,illness.years-1);outcomeModal('🏥',good?'Good news at the follow-up':'Slow progress',good?'The treatment helps. Dr. Patel tells you to keep taking care of yourself.':'You need more time and another follow-up. Your doctor adjusts the plan.',{cash:-illness.cost,health:good?14:6,stress:good?-9:-3});s.illnesses=s.illnesses.filter(x=>x.years>0);save();}},
+ {label:'Take it easy and rest',run:()=>{if(!energyCost())return;illness.years=Math.max(0,illness.years-1);outcomeModal('🛋️','A few weeks of taking it easy',pick(['You catch up on books and let the laundry wait.','Your friends bring soup. One of them burns it. You eat it anyway.','You finally listen when your body asks for a break.']),{health:5,stress:-12,happiness:4});s.illnesses=s.illnesses.filter(x=>x.years>0);save();}},
+ {label:'Ignore the symptoms and keep going',run:()=>{if(!energyCost())return;const bad=prob(.5);if(bad)illness.years++;outcomeModal('💤','Pushing through',bad?'You get exhausted halfway through the week. The doctor is not impressed.':'You get through your commitments, but you really do need rest.',{health:bad?-13:-4,stress:10});}}
+ ]});}
+// Preserve an ordinary pension when the original age-75 retirement rule fires.
+const laterFinances=annualFinances;
+annualFinances=function(){if(s.age>=75&&!s.flags.retired&&s.jobId&&!s.pension){const j=careers.find(x=>x.id===s.jobId);s.pension=Math.round((j?.pay||32000)*(.10+Math.min(10,s.jobYears)*.008));s.retirementYear=s.year;}laterFinances();};
+const laterAnnual=annualLife;
+annualLife=function(){laterAnnual();ensureWorld();laterSicknessYear();
+ if(s.age>=64&&s.retirementHome!=='own'){
+ const home=LATER.homes.find(h=>h.id===s.retirementHome);
+ if(home){const fee=home.yearly;s.cash=Math.max(0,s.cash-fee);if(s.cash===0){statChange({stress:9,happiness:-5});if(s.retirementHome!=='maple'){addLog('📦','A tighter budget',`The bill at ${home.title} is becoming difficult. You may want to choose a less expensive home.`,'finance');}}else if(prob(.4))statChange({happiness:home.quality,stress:-home.quality});}
+ }
+ if(s.age>=60&&s.flags.retired&&s.pension>0){s.cash+=s.pension;}
+ if(s.age>=16&&s.age<=69&&prob(.026)){const f=pick(friends().filter(alive));if(f){relate(f,-12);addLog('🚚',`${f.name} moved away`,`${f.name} moved to another city. They promise to stay in touch, and the first postcard arrives with the wrong stamp.`,'loss');}}
+};
+const laterPass=passAway;
+passAway=function(){const age=s.age,ill=s.illnesses?.some(x=>x.harm>=12),accident=age>=68&&s.stats.health>=40&&prob(.13);
+ const cause=ill&&prob(.45)?'after complications from an illness':accident?pick(['after a spectacular mishap at the annual lawn-chair race','after a sudden accident while trying to rescue a goat from the town fountain','after a freak mishap during the neighborhood pancake festival','after an unexpected accident at a very competitive garden show']):pick(['after a full life of surprising turns','following a quiet final chapter surrounded by familiar faces','after many years of making the world a little stranger']);
+ s.lastDeathCause=cause;
+ laterPass();
+ // The original ending already sets died/year/next generation and opens inheritance choices.
+ const log=s.history.find(h=>h.title===`Remembering ${me().name}`&&h.age===age);if(log)log.detail=`${me().name} passed away at ${age} ${cause}. Their stories will be retold for years.`;
+ const last=s.lives.at(-1);if(last&&last.id===s.playerId)last.cause=cause;
+ if(modal&&s.flags.ended){modal.text=`${me().name} passed away at ${age} ${cause}. ${children(me()).filter(alive).length} living children remain, alongside old friends, old arguments, and ${fmt(s.cash)} in savings.`;renderModal();}
+ save();};
+const laterInherit=inherit;
+inherit=function(id){laterInherit(id);s.illnesses=[];s.laterArcs={};s.masteries={};s.retirementHome='own';s.retirementFriends=[];s.pension=0;s.lastShowcaseYear=-1;s.lastMedicalYear=-1;s.retirementYear=null;s.lastDeathCause=null;save();render();};
+// Retirement isn't one automatic birthday. Players can leave the workforce in their 50s and choose where to live.
+function retireNow(){if(s.age<55||!s.jobId||s.flags.retired)return;
+ const j=careers.find(c=>c.id===s.jobId);const pension=Math.round((j?.pay||32000)*(.10+Math.min(10,s.jobYears)*.008));
+ openModal({icon:'🌇',title:'The last day at work?',text:`Retire from ${jobTitle()} and receive an estimated ${fmt(pension)} a year from savings and benefits. You can still write, paint, travel or compete in retirement.`,choices:[{label:'Hand in the keys',run:()=>{s.pension=pension;s.retirementYear=s.year;s.flags.retired=true;s.jobId=null;outcomeModal('🌇','Finally, your own time',pick(['Your coworkers throw you a party. Somebody brings a cake shaped like your desk.','You leave your keys on the counter and immediately take a three-hour nap.','At the farewell lunch someone asks who will fix the printer. You say: “Not me.”']),{happiness:12,stress:-15});}},{label:'Not quite ready',run:()=>{}}]});}
+function retirementHomes(){ensureWorld();if(s.age<62)return say('Retirement living options begin at 62.');openModal({icon:'🏡',title:'Where to spend your later years?',text:`Right now: ${(LATER.homes.find(h=>h.id===s.retirementHome)||LATER.homes[0]).title}. Your savings: ${fmt(s.cash)}. You can move again in a later year.`,choices:LATER.homes.map(h=>({label:`${h.title}${h.id===s.retirementHome?' · CURRENT':''}`,note:`${h.upfront?fmt(h.upfront)+' to move · ':''}${fmt(h.yearly)}/year · ${h.desc}`,disabled:h.id===s.retirementHome||s.cash<h.upfront||s.lastRetirementMoveYear===s.year,run:()=>{s.lastRetirementMoveYear=s.year;s.cash-=h.upfront;s.retirementHome=h.id;const resident=makePerson(nameNotUsed(),s.year-(62+r(31)),[],'friend');resident.bonds[s.playerId]=55+r(26);if(!s.friendIds.includes(resident.id))s.friendIds.push(resident.id);outcomeModal('🏡',`Welcome to ${h.title}`,`Your new neighbor, ${resident.name}, introduces themselves with a warning about the local bingo champion. ${h.desc}`,{stress:6,happiness:h.quality+4,social:4});}}))});}
+// Skill-based invitations: a musician gets an audition, a coder gets a prototype pitch,
+// a tabletop player gets a tournament. You can't farm trophies by repeating an action.
+const laterShowcases={
+ art:['🎨','County gallery night','Your piece is called “The Town That Forgot Tuesday.” The curator puts it near the front door.','Your sculpture tips over just before judging. A volunteer helps rescue it.'],
+ music:['🎸','The Corner Stage Open','Your performance of “Crows on the Telegraph Wire” wins the crowd.','Your microphone dies in the bridge. The audience sings the last verse with you.'],
+ sports:['🏆','The city championship','You win after a hard final round. The trophy is heavier than it looks.','You finish out of the medals but beat your personal best.'],
+ coding:['💻','Indie game showcase','Your game “Knight of the Noodle Court” wins best prototype.','A last-minute bug turns the final boss into a harmless chair. The judges still laugh.'],
+ cooking:['🥧','The bake-off','Your peach cobbler wins the blue ribbon. The judge asks for the recipe.','Your pastry cracks in the oven. The filling still wins a consolation prize.'],
+ writing:['✒️','Short story contest','Your story “When the Streetlights Fell Asleep” earns a first-place certificate.','The editors love your characters but want an entirely different ending.'],
+ tabletop:['🎲','Tabletop convention','You improvise a brilliant dungeon finale. Even the rival game master cheers.','Your players befriend the villain and refuse to fight. You improvise a town wedding.'],
+ gaming:['🎮','Pixel Palace tournament','You win the final round with one hit point left. The room erupts.','Your controller disconnects. Your rival offers a rematch rather than claiming the win.'],
+ science:['🔭','Local discovery award','Your night-sky photographs earn a prize from the science museum.','Clouds ruin your observation night. You submit the best analysis you can.'],
+ animals:['🐾','Rescue volunteer award','The shelter recognizes your work helping frightened dogs settle into new homes.','A tiny ferret steals your award ribbon during the ceremony.'],
+ gardening:['🌻','Harvest festival','Your enormous sunflower takes first place. A child asks if it is a tree.','Your entry is judged by a committee that prefers tomatoes. You still sell out of seedlings.'],
+ media:['🎙️','Community film festival','Your short film “The Day the Bus Was Late” wins audience favorite.','The projector jams. Your whole cast performs the film live as a play.'],
+ chess:['♟️','Open chess finals','You spot a tricky fork and take the match.','You lose to a retired postal worker who offers a rematch next year.'],
+ craft:['🛠️','Maker fair','Your walking clockwork frog takes the prize and escapes the table.','The robot breaks its leg right before judging. You give a brilliant explanation anyway.'],
+ theater:['🎭','The acting festival','Your ridiculous monologue about a haunted bakery gets a standing ovation.','You forget your lines and improvise an apology from the villain.'],
+ dance:['💃','The dance showcase','Your routine comes together at the last second.','You miss a step and your partner catches you. The crowd cheers anyway.'],
+ social:['🎤','The community debate','Your thoughtful argument wins the crowd over.','The opposing team wins, but invites you to join their next event.']
+};
+function skillShowcase(){ensureLL5();if(s.energy<1)return say('Your calendar is full this year.');if(s.lastShowcaseYear===s.year)return say('You already entered an event this year.');
+ const skills=Object.entries(s.skills).filter(([k,v])=>v>=25&&laterShowcases[k]).sort((a,b)=>b[1]-a[1]).slice(0,10);
+ if(!skills.length){openModal({icon:'🎨',title:'Find your thing first',text:'Try some hobbies and get a bit of practice in. Every great amateur started badly.',choices:[{label:'Browse activities',run:()=>{tab='activities';render();}}]});return;}
+ openModal({icon:'🏅',title:'Put your skills to the test',text:'A stage, a workshop, a competition, an audience. The stakes get higher as you get better.',choices:skills.map(([skill,value])=>{const [icon,title,good,bad]=laterShowcases[skill];return {label:`${icon} ${title} · ${value}/100`,run:()=>{
+ if(!energyCost())return;s.lastShowcaseYear=s.year;const chance=Math.min(.94,.20+value*.009+(s.stats.confidence-50)*.0016-(s.injury&&skill==='sports'?.24:0));const won=prob(chance),prize=won?s.age<18?0:Math.round(120+value*9):0;
+ if(won){s.trophies.push({name:title,year:s.year,skill});s.masteries[skill]=(s.masteries[skill]||0)+1;}
+ const fx={[skill]:won?10:6,confidence:won?10:-2,reputation:won?7:0,happiness:won?10:4,stress:won?-4:3,cash:prize,popularity:won?8:0};
+ outcomeModal(icon,won?`You won ${title}`:title,won?good:bad,fx);
+ }};})});}
+function sleepoverActivity(){if(s.age<8||s.age>19)return;const guest=pick(friends().filter(alive))||makeFriend(true);openModal({icon:'🛌',title:`Sleepover with ${guest.name}`,text:`${guest.name} has invited you over. There are blankets everywhere and somebody has ordered a truly unreasonable number of pizzas.`,choices:[
+ {label:'Tell ghost stories until sunrise',run:()=>{if(!energyCost())return;const won=prob(.38+(s.skills.writing||0)*.006);relate(guest,won?15:7);outcomeModal('👻',won?'Your story terrified everyone':'The ghost of the pizza box',won?`Your tale about the footsteps on the roof leaves ${guest.name} clutching a pillow. Later, you hear actual footsteps. It is the cat.`:`You mix up the scary ending. ${guest.name} turns the story into a comedy about a haunted refrigerator.`,{writing:8,happiness:9,stress:won?1:-2});}},
+ {label:'Start a pillow-fort competition',run:()=>{if(!energyCost())return;const won=prob(.38+(s.skills.craft||0)*.006);relate(guest,won?12:5);outcomeModal('🏰','The Great Fort War',won?'Your blanket fortress has three rooms and a working drawbridge. Somebody declares you mayor.':'The entire construction collapses. You declare it a castle ruin and demand admission fees.',{craft:8,happiness:11,confidence:won?6:-1});}},
+ {label:'Confide a secret',run:()=>{if(!energyCost())return;const close=prob(.32+(s.skills.social||0)*.005);relate(guest,close?18:-5);outcomeModal('💜',close?'A friend who listens':'An awkward silence',close?`${guest.name} admits they have worried about the same thing. You talk until the birds start singing.`:`${guest.name} does not know what to say. A few minutes later they bring you a cookie. It helps.`,{social:8,happiness:close?10:2});}}
+ ]});}
+const laterDeepActivity=deepActivity;
+deepActivity=function(id){if(id==='showcase'){skillShowcase();return true;}if(id==='doctor'){medicalVisit();return true;}if(id==='sleepover'){sleepoverActivity();return true;}if(id==='retire'){retireNow();return true;}if(id==='home'){retirementHomes();return true;}if(id==='careerday'){careerDay();return true;}return laterDeepActivity(id);};
+const laterCareerLines={
+ social:['You calm everyone down, find the missing paperwork and receive a very sincere thank-you card.','The argument grows louder until the manager sends everyone home with a written apology to make.'],
+ writing:['You catch a mistaken date, rewrite the report and save the morning edition.','Your editor spots a second mistake. You spend the afternoon correcting copy while the printer waits.'],
+ music:['You pull a spare cable from the back of your case and the first song brings the house down.','The sound never gets fixed. The audience gets an acoustic set they did not buy tickets for.'],
+ coding:['You isolate a broken dependency and fix it just before the client walks in.','The fix breaks something else. Your team spends the weekend rolling back and testing.'],
+ science:['You retrace the experiment and discover the specimen was mislabeled rather than lost.','The sample was contaminated. You have to repeat two weeks of work.'],
+ sports:['You adjust the drills and get everyone through the session without an injury.','Two players argue about the new plan and practice breaks down early.'],
+ art:['You use the damage as part of the piece. The client calls it inspired.','The client demands a replacement and the deadline does not move.'],
+ cooking:['You invent a smaller menu and still feed every table before closing.','Half the dinner service is delayed. The customers write dramatic reviews.'],
+ animals:['You sit quietly with the animal until it trusts you enough to take a treat.','The animal remains scared. You call in a behavior specialist rather than forcing the situation.'],
+ craft:['You salvage a replacement part and the prototype works beautifully.','The replacement breaks on the test bench. You have to postpone delivery.'],
+ theater:['You step into the missing role and the show goes ahead.','The understudy needs the script. Opening night starts forty minutes late.'],
+ gaming:['You improvise a new strategy, and the team fights back into the final.','The players tilt. You call a break and rebuild the plan for next week.']
+};
+function pickedCareerLine(k,won){return (laterCareerLines[k]||['You find a practical workaround. The customer leaves smiling.','Your first solution fails. A more experienced colleague helps you put things right.'])[won?0:1];}
+function careerDay(){if(!s.jobId||s.flags.retired||s.energy<1)return say('Get a job first.');const j=careers.find(c=>c.id===s.jobId);if(!j)return;
+ const scenarios={social:['A regular customer is furious because somebody mixed up their order.','The office team is fighting over an event nobody wants to organize.'],writing:['A deadline lands early. The editor says your draft needs a new ending.','You discover a serious error in a report before it is published.'],music:['The sound check fails ten minutes before the audience arrives.','A guest performer is late and the set list has to change.'],coding:['The app crashes in front of an important client.','The QA team finds a bug that only happens on Tuesdays.'],science:['Your carefully labeled sample has gone missing.','A colleague proposes an experiment the lab has never tried.'],sports:['An important training session has to move indoors.','Your team is exhausted before the biggest event of the season.'],art:['The client demands a redesign the night before the deadline.','The artwork arrives damaged at the gallery.'],cooking:['The restaurant is fully booked and the freezer has quit.','A customer has a dietary request your kitchen has never handled.'],animals:['An anxious rescue animal refuses to leave its carrier.','The shelter has more animals than available foster homes.'],craft:['A crucial part is out of stock on the day of installation.','The prototype passes every test except the final one.'],theater:['The leading performer loses their voice just before curtain.','A prop is missing and nobody knows where it went.'],gaming:['Your tournament team loses its best player hours before the match.','Your game’s final boss cannot be beaten because of a bug.']};
+ const issue=pick(scenarios[j.skill]||['A demanding customer arrives just before closing.','The team needs somebody to solve an unexpected problem.']);
+ openModal({icon:'💼',title:`Another day as a ${j.title}`,text:issue,choices:[
+ {label:'Take charge and solve it',run:()=>{if(!energyCost())return;const score=activityScore(j.skill),won=prob(Math.min(.92,.24+score*.007+s.jobLevel*.03));const cash=won?Math.round(j.pay/52*.25):0;
+ if(won&&prob(.28))promote('careerday');const good=pickedCareerLine(j.skill,true),bad=pickedCareerLine(j.skill,false);outcomeModal('💼',won?`The ${j.title} saved the day`:`A rough shift as ${j.title}`,won?`${issue} ${good}`:`${issue} ${bad}`,{[j.skill]:won?10:7,cash,stress:won?2:12,reputation:won?8:-4});}},
+ {label:'Ask a colleague to help',run:()=>{if(!energyCost())return;const won=prob(Math.min(.95,.46+(s.skills.social||0)*.005));outcomeModal('🤝',won?'Teamwork saved the shift':'A long meeting, a short result',won?'Your colleague spots what you missed. You share the credit and finish the day on time.':'The two of you argue over the plan. You agree to try again tomorrow.',{social:9,[j.skill]:5,stress:won?-6:10,reputation:won?5:-2});}},
+ {label:'Blame the newest employee',run:()=>{if(!energyCost())return;const caught=prob(.45+(s.stats.reputation<30?.15:0));outcomeModal('📋',caught?'The blame came back to you':'A temporary escape',caught?'Management reviews the notes. The mistake was yours, and now you have two problems.':'You dodge responsibility this time. Your coworker will remember it.',{alignment:-18,reputation:caught?-19:-5,stress:caught?14:6});}}
+ ]});}
+const laterActivities=activities;
+activities=function(){let html=laterActivities();if(s.age<8)return html;const tiles=[];
+ if(s.age<=19)tiles.push(activityTile('🛌','Have a sleepover','Pillows, secrets, dares and fallout.','sleepover'));
+ if(s.age>=10)tiles.push(activityTile('🩺','Visit the doctor',s.illnesses?.length?`Managing ${s.illnesses[0].name}`:'A checkup, or time to deal with symptoms.','doctor'));
+ if(s.age>=10)tiles.push(activityTile('🏆','Enter a competition','Your actual skills decide whether you can win.','showcase',s.lastShowcaseYear===s.year));
+ if(s.jobId&&s.age>=18&&!s.flags.retired)tiles.push(activityTile('💼','Deal with a work crisis','An actual shift with choices.','careerday'));
+ if(s.age>=55&&s.jobId&&!s.flags.retired)tiles.push(activityTile('🌇','Consider retirement','Your workday might finally be over.','retire'));
+ if(s.age>=62)tiles.push(activityTile('🏡','Explore retirement homes',`Currently: ${(LATER.homes.find(h=>h.id===s.retirementHome)||LATER.homes[0]).title}.`,'home'));
+ if(tiles.length)html=html.replace('</section>'+ageButton(),'</section><section class="card pad"><h2 class="heading">🎲 The big stuff</h2><div class="activity-list">'+tiles.join('')+'</div></section>'+ageButton());
+ return html;};
+const laterLifeTab=lifeTab;
+lifeTab=function(){let html=laterLifeTab();if(s.age>=62){const h=LATER.homes.find(x=>x.id===s.retirementHome)||LATER.homes[0];const card=`<section class="card pad"><h2 class="heading">🏠 Where you call home</h2><p class="lead">${esc(h.title)} · ${fmt(h.yearly)}/year. ${esc(h.desc)}</p><div class="btn-row"><button class="btn tiny alt" data-activity="home">Look at retirement homes</button>${s.age>=55&&s.jobId&&!s.flags.retired?'<button class="btn tiny alt" data-activity="retire">Retire from work</button>':''}</div></section>`;html=html.replace(ageButton(),card+ageButton());}
+ return html;};
+// Match the player’s current life rather than showing an interchangeable progress dashboard.
+function laterChapter(){ensureWorld();const yours=s.history.filter(h=>h.who===s.playerId),interesting=yours.filter(h=>!['finance','activity'].includes(h.kind)).slice(0,7);const named=me().name.split(' ')[0],p=partner();const memories=interesting.map(h=>`${h.title.toLowerCase()}`).slice(0,2);
+ let lines=[];
+ if(s.age<12)lines.push(`${named} is growing up in ${s.city}, with more questions than the adults can answer.`);
+ else if(s.age<18)lines.push(`${named} is ${s.age}, ${s.grades>=78?'doing well in school':s.grades<40?'struggling with grades':'making a way through school'}, and ${s.popularity>=72?'well known around the halls':s.popularity<28?'keeping a low profile':'still figuring out where to sit at lunch'}.`);
+ else lines.push(`${named} is ${s.age} and ${s.jobId?`working as a ${jobTitle()}`:s.flags.retired?'retired and busy making new plans':'between jobs or exploring what comes next'} in ${s.city}.`);
+ if(p&&alive(p))lines.push(`${p.name} is part of the picture${s.married?', and the two of you are married':''}.`);
+ const kids=children(me()).filter(alive);if(kids.length)lines.push(`${kids.length} child${kids.length===1?'':'ren'}${kids.length===1?', '+kids[0].name:''} figure${kids.length===1?'s':''} into the story.`);
+ if(s.illnesses.length)lines.push(`Meanwhile, ${s.illnesses.map(i=>i.name).join(' and ')} ${s.illnesses.length===1?'is':'are'} making this year harder.`);
+ if(s.retirementHome!=='own')lines.push(`Home these days is ${LATER.homes.find(h=>h.id===s.retirementHome)?.title||'a retirement community'}.`);
+ if(s.laterArcs&&Object.values(s.laterArcs).some(x=>!x.finished))lines.push(`An unfinished mystery is still following ${named} around.`);
+ if(memories.length)lines.push(`Recently, the days have included ${memories.join('; ')}.`);
+ return lines.join(' ');
+}
+const laterJournal=journalTab;
+journalTab=function(){const html=laterJournal();const highlights=s.history.filter(h=>h.who===s.playerId&&!['finance','activity'].includes(h.kind)).slice(0,5);const awards=s.trophies.slice(-5).map(t=>typeof t==='string'?t:t.name||t.club||'A small victory');const panel=`<section class="card pad ll-chapter"><span class="kicker">THE STORY SO FAR</span><h2 class="title">${esc(me().name.split(' ')[0])}, age ${s.age}</h2><p class="lead">${esc(laterChapter())}</p><div class="ll-chapter-bits">${s.illnesses.length?`<span>🩺 ${esc(s.illnesses.map(i=>i.name).join(', '))}</span>`:''}${s.flags.retired?'<span>🌇 Retired</span>':''}${awards.length?`<span>🏆 ${awards.length} recent awards</span>`:''}<span>📍 ${esc(s.city)}</span></div>${highlights.length?`<h3 class="heading" style="margin-top:18px">Moments that changed things</h3>${highlights.map(h=>`<p class="ll-memory"><b>${esc(h.icon)} ${esc(h.title)}</b><small>Age ${h.age}</small></p>`).join('')}`:''}</section>`;
+ return panel+html;};
+const laterHome=home;
+home=function(){const h=laterHome();const summary=`<section class="card pad ll-chapter ll-life-now"><span class="kicker">YOUR LIFE RIGHT NOW</span><p class="lead">${esc(laterChapter())}</p>${s.illnesses.length?'<button class="btn tiny alt" data-activity="doctor">🩺 See the doctor</button>':''}${s.age>=62?'<button class="btn tiny alt" data-activity="home">🏠 Find a retirement home</button>':''}</section>`;return h.replace(ageButton(),summary+ageButton());};
+
 startingLook=newLook();load();if(s)ensureExtras();render();
 })();
