@@ -1,8 +1,14 @@
 # 🌱 Little Life
 
-A teen-friendly, choice-driven life simulator where the mundane, the embarrassing, and the downright strange can all change a family story. Start at birth or age 12, grow skills, make friends and enemies, get jobs, adopt pets, raise a family, and pass your story to the next generation.
+A choice-driven life simulator where the mundane, the embarrassing, and the downright strange can all change a family story. Start at birth or age 12, grow skills, make friends and enemies, get jobs, adopt pets, raise a family, and pass your story to the next generation.
 
 **Play:** once GitHub Pages is enabled, the intended URL is `https://timothyallgood.github.io/LittleLife/`.
+
+## A childhood that gets messy
+
+The childhood expansion adds 58 different scenes involving lost dogs, bullies, school competitions, neighbors, bicycle dares, family worries, embarrassing parties, petty crimes, missing keepsakes and stranger things. There are also five three-part stories: a library key, a bike-racing rival, a questionable garage band, the search for a lost dog, and a closing arcade. Your first decision changes the dialogue in the later chapters, and a final callback can turn up years afterward. Success, injury, friendship, reputation, grades, money and other consequences depend on choices and skills.
+
+The **🎲 Give me a name** button draws from a larger pool of first and surnames. DiceBear portraits use explicit hair styles, eye colors, eyebrows, mouths, and accessories where the Adventurer renderer supports them; the appearance seed is preserved across aging and saves.
 
 ## What is in the game?
 
@@ -31,7 +37,9 @@ The game logic and event system do not require an account or server. **Character
 index.html                 Small HTML shell and entry point
 assets/styles.css          UI and responsive light/dark design
 assets/game.js             Game state, rules, activity and event engine
-assets/legacy-rewrites.js  Narrative revisions for all 92 original event setups
+assets/legacy-rewrites.js  Reworked text and titles for the original 92 events
+assets/legacy-outcomes.js  Individual outcomes for 90 early events (two have bespoke event code)
+assets/childhood.js        58 childhood events and five multi-year chapter stories
 .github/workflows/pages.yml  GitHub Pages deploy action
 docs/GAME_DESIGN.md       Gameplay direction and tone
 docs/ARCHITECTURE.md      Data model, save system, DiceBear mapping and testing
@@ -43,10 +51,13 @@ AGENTS.md                 Contributor/AI-agent guardrails
 ```sh
 node --check assets/game.js
 node --check assets/legacy-rewrites.js
+node --check assets/legacy-outcomes.js
+node --check assets/childhood.js
 python3 tests/smoke.py
+python3 tests/browser_smoke.py
 ```
 
-See `docs/ARCHITECTURE.md` for browser-testing recommendations. In particular, check avatar customization in both themes, an early-childhood event, a teen event, career progression, and save export/import before merging gameplay changes.
+The browser smoke suite needs Python Playwright and a local Chromium installation. See `docs/ARCHITECTURE.md` for browser-testing recommendations. In particular, check avatar customization in both themes, an early-childhood event, a teen event, career progression, and save export/import before merging gameplay changes.
 
 ## Save data & privacy
 

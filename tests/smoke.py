@@ -7,9 +7,11 @@ html=(root/'index.html').read_text()
 css=(root/'assets/styles.css').read_text()
 js=(root/'assets/game.js').read_text()
 rewrites=(root/'assets/legacy-rewrites.js').read_text()
-assert all((root/p).is_file() for p in ['index.html','assets/styles.css','assets/game.js','assets/legacy-rewrites.js','README.md','AGENTS.md'])
+childhood=(root/'assets/childhood.js').read_text()
+outcomes=(root/'assets/legacy-outcomes.js').read_text()
+assert all((root/p).is_file() for p in ['index.html','assets/styles.css','assets/game.js','assets/legacy-rewrites.js','assets/childhood.js','assets/legacy-outcomes.js','README.md','AGENTS.md'])
 assert 'assets/styles.css' in html and 'assets/legacy-rewrites.js' in html and 'assets/game.js' in html
-assert html.index('legacy-rewrites.js') < html.index('game.js')
+assert html.index('legacy-rewrites.js') < html.index('childhood.js') < html.index('legacy-outcomes.js') < html.index('game.js')
 assert 'https://api.dicebear.com/10.x/adventurer/svg' in js
 assert 'function dicebearUrl' in js and 'function avatar(' in js
 assert '<svg' not in js[js.index('function avatar('):js.index('const me=()')]
@@ -19,4 +21,10 @@ old_ids=re.findall(r"\bE\('([^']+)','(?:baby|child|teen|young|adult|senior)'",js
 rewrite_ids=re.findall(r'^  "([a-z]+)": \{',rewrites,re.M)
 assert len(old_ids)==92, len(old_ids)
 assert set(rewrite_ids)==set(old_ids), (len(rewrite_ids),set(old_ids)-set(rewrite_ids))
-print(f'PASS: {len(old_ids)} original events have editorial rewrites, DiceBear is wired, relative assets and saves are retained.')
+assert len(re.findall(r'\{id:\x27[^\x27]+\x27,age:',childhood))>=58
+assert len(re.findall(r'\{id:\x27[^\x27]+\x27,age:\[\d+,\d+\],icon:\x27[^\x27]+\x27,acts:',childhood))==5
+assert len(re.findall(r'^ [a-z]+:\s*\[',outcomes,re.M))>=90
+assert 'eyesColor' in js and 'hairVariant' in js and 'data-setup=\"randomName\"' in js
+assert 'Uses confidence' not in js and 'Your choices shape later events' not in js and 'consequences can stick' not in js
+assert 'function childhoodSequelText' in js and 'firstChoice' in js
+print(f'PASS: {len(old_ids)} legacy scene rewrites, 58+ child events and 5 arcs, explicit DiceBear, name randomizer, saves, scripts.')

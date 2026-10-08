@@ -47,7 +47,7 @@ html[data-theme="dark"] .progress,html[data-theme="dark"] .bar-mini{background:#
 html[data-theme="dark"] .profile{background:linear-gradient(140deg,#5a4db3,#7354a8 65%,#a0679c)!important}
 
 /* Little Life 5 — playful editorial journal, rather than a BI dashboard */
-@import url('');
+
 :root {--ink:#262434;--muted:#777083;--violet:#673d8d;--purple:#7b4ba1;--line:#e5d9dd;--bg:#f7f3ef;--white:#fffaf6;--shadow:0 4px 0 #332c2b0b}
 body{font-family:ui-rounded,-apple-system,BlinkMacSystemFont,'Avenir Next','Trebuchet MS',sans-serif;background:linear-gradient(155deg,#faeadd 0%,#f9f4ee 25%,#eef2ed 100%)!important;letter-spacing:-.08px}
 .shell{max-width:1020px;padding-top:17px}.layout{grid-template-columns:minmax(215px,251px) minmax(0,1fr);gap:15px}
@@ -138,3 +138,40 @@ html[data-theme="dark"] .ll5-quick .tile{background:#332d3b!important;border-col
 .dicebear-fallback{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(24px,4vw,54px);z-index:0}
 .setup-avatar .dicebear-frame,.face-small .dicebear-frame,.profile-avatar .dicebear-frame{height:100%;min-height:60px}
 html[data-theme="dark"] .dicebear-frame{background:#493d59}
+
+/* The game, not a landing page. Give the story room, especially on real iPads. */
+.name-dice{display:inline-flex;align-items:center;justify-content:center;margin:9px 0 17px;width:auto;min-height:41px;padding:9px 14px}
+#myName{font-size:16px;width:100%}
+.dicebear-frame img{object-position:center;image-rendering:auto}
+.appearance-top{min-width:0}.appearance-top>div:last-child{min-width:0}
+.new-card .look-swatches{gap:8px}.new-card .look-swatch{width:34px;height:34px;min-width:34px}
+.modal .choice{line-height:1.4;text-align:left;overflow-wrap:anywhere}
+.bottom-nav{overscroll-behavior-x:contain}
+@media (min-width:600px) and (max-width:1024px){
+ .shell{max-width:900px;padding-inline:20px}.layout{grid-template-columns:1fr}
+ .sidebar{display:block}.sidebar>.profile{min-height:150px}
+ .mobile-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .content{gap:14px}
+ .new-card{max-width:690px}
+ .look-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:550px){
+ .shell{max-width:100vw;padding:11px 10px calc(108px + env(safe-area-inset-bottom))}
+ .logo p{display:none}.top-actions{display:flex;gap:5px;flex-shrink:0}.logo{min-width:0}
+ .top .year-pill{padding:6px 7px}.top .icon-btn{width:35px;height:35px;flex-shrink:0}
+ .age-panel{flex-wrap:wrap}.age-panel>div{flex:1 1 150px}
+ .age-panel .btn{flex:1 1 100%;white-space:normal;min-height:44px}
+ .bottom-nav{justify-content:flex-start;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-inline:env(safe-area-inset-left)}
+ .bottom-nav::-webkit-scrollbar{display:none}.bottom-nav .tab{flex:0 0 14.2857%;min-width:50px;padding-inline:2px;font-size:10px}
+ .ll5-quick{grid-template-columns:repeat(2,minmax(0,1fr))}.ll5-quick .tile:last-child{grid-column:span 2;min-height:65px}
+ .new-screen{display:block;padding:10px 8px 24px}.new-card{padding:16px 12px;border-radius:15px}
+ .appearance-top{align-items:start;gap:10px}.appearance-top .setup-avatar{width:86px;height:86px;flex:0 0 86px}
+ .appearance-top strong{font-size:16px}.appearance-top p{font-size:11px}
+ .look-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .new-card .look-swatch{width:30px;height:30px;min-width:30px}
+ .modal-wrap{padding:8px;align-items:center}.modal{padding:18px 15px;border-radius:16px;max-height:calc(100dvh - 35px)}
+ .modal h2{font-size:21px}.modal .choice{min-height:49px;padding:12px}
+}
+@media(max-width:360px){.look-grid{grid-template-columns:1fr}.logo h1{font-size:19px}.modal{padding:14px 11px}}
+html[data-theme="dark"] .new-card .name-dice{background:#4b3953!important;color:#ffedf9!important;border-color:#bd8aaa!important}
+html[data-theme="dark"] .look-swatch.active::after{color:white}
