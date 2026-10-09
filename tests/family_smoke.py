@@ -55,23 +55,31 @@ with sync_playwright() as p:
         page.evaluate('''()=>{const q=__familyQA,x=q.state();x.partnerId=x.people.at(-1).id;x.cash=4500;x.energy=3;q.save();q.render()}''')
         page.locator('.bottom-nav [data-tab="life"]').click()
         page.locator('[data-do="baby"]').first.click()
-        assert 'girl' in page.locator('.modal').inner_text().lower()
-        page.locator('.modal [data-modal]').first.click() # girl
-        assert 'Naming a girl' in page.locator('.modal').inner_text()
+        assert 'Find out now' in page.locator('.modal').inner_text()
+        page.locator('.modal [data-modal]').first.click() # reveal a random boy or girl
+        reveal=page.locator('.modal').inner_text()
+        assert 'Naming a girl' in reveal or 'Naming a boy' in reveal,reveal
+        gender='female' if 'Naming a girl' in reveal else 'male'
         page.locator('.modal [data-modal]').first.click() # name
         pregnant=page.evaluate('''()=>({expecting:__familyQA.state().expecting,energy:__familyQA.state().energy})''')
-        assert pregnant['expecting'] and pregnant['expecting']['gender']=='female',pregnant
+        assert pregnant['expecting'] and pregnant['expecting']['gender']==gender,pregnant
         page.locator('.modal [data-close]').click() if page.locator('.modal [data-close]').count() else None
         page.locator('.bottom-nav [data-tab="life"]').click()
         assert page.locator('[data-do="pregnancy"]').count()==1
         page.locator('[data-do="pregnancy"]').click()
         assert 'baby shower' in page.locator('.modal').inner_text().lower()
+        page.locator('.modal [data-modal]').first.click() # shower
+        page.locator('.modal [data-modal]').first.click() # return to life
+        # A shower shouldn't prevent a checkup in the same pregnancy.
+        page.locator('[data-do="pregnancy"]').click()
+        assert 'Visit the doctor' in page.locator('.modal').inner_text()
+        page.locator('.modal [data-modal]').first.click() # checkup; shower now hidden
         page.locator('.modal [data-modal]').first.click()
-        page.locator('.modal [data-modal]').first.click()
+        assert page.evaluate('__familyQA.state().expecting.pregnancyChoices.length')==2
         page.locator('.top-age-button').click()
-        assert "It's a girl" in page.locator('.modal').inner_text(),page.locator('.modal').inner_text()[:280]
+        assert f"It's a {'girl' if gender=='female' else 'boy'}" in page.locator('.modal').inner_text(),page.locator('.modal').inner_text()[:280]
         born=page.evaluate('''()=>{let q=__familyQA,s=q.state();return q.children(q.byId(s.playerId)).map(p=>({name:p.name,gender:p.gender,role:q.role(p)}))}''')
-        assert any(b['gender']=='female' and b['role']=='Daughter' for b in born),born
+        assert any(b['gender']==gender and b['role']==('Daughter' if gender=='female' else 'Son') for b in born),born
         assert not errors,(width,errors[:4])
         print('FAMILY PASS',width,{'relatives':x,'adultPair':pair,'newborn':born})
         page.close()

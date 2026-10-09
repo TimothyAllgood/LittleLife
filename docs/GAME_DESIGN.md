@@ -89,6 +89,6 @@ A family is a graph, not a counter. It includes parents and siblings, grandparen
 
 There is now a creator gender choice of female or male. New romantic relationships are opposite-sex only, with sensible age gates: no romance between children and adults, and younger characters may interact romantically only with same-age peers. Keep the subject age-appropriate.
 
-Pregnancy is a small playable story rather than an instant child-spawning button: a couple can plan a child, reveal the gender or leave it as a surprise, name the baby, throw a shower, attend a checkup, assemble a nursery and experience a birth on the next birthday. Adopted children also have their own names and genders. Do not spawn five babies in one year. Family members may have significant experiences independent of the player.
+Pregnancy is a small playable story rather than an instant child-spawning button: a couple can plan a child, find out a randomly determined gender or leave it as a surprise, name the baby, throw a shower, attend a checkup, assemble a nursery and experience a birth on the next birthday. Adopted children also have their own names and genders. Do not spawn five babies in one year. Family members may have significant experiences independent of the player.
 
 Family stories should span the full emotional range: deliberate kindness, selfishness, jealousy, grief, joy, practical problems and absurdism. “My cousin stole my controller” is a story; “something happened with a family member” is not.

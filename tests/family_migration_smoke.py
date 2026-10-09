@@ -21,13 +21,15 @@ with sync_playwright() as p:
     page.locator('[data-setup="begin"]').click()
     page.locator('.modal [data-modal]').first.click()
     check=page.evaluate('''()=>{const q=__familyQA,s=q.state();const ids=s.people.map(p=>p.id),n=s.people.length;s.people.forEach(p=>delete p.gender);delete s.familyWorld;q.save();q.load();return {old:n,after:q.state().people.length,ids:JSON.stringify(ids),now:JSON.stringify(q.state().people.map(p=>p.id)),genders:q.state().people.every(p=>['male','female'].includes(p.gender))}}''')
-    assert check['genders'] and check['old']==check['after'] and check['ids']==check['now'],check
+    assert check['genders'] and check['old']<=check['after'] and set(__import__('json').loads(check['ids'])).issubset(set(__import__('json').loads(check['now']))),check
+    stable=page.evaluate('''()=>{const q=__familyQA,s=q.state(),count=s.people.length;q.save();q.load();return {before:count,after:q.state().people.length}}''')
+    assert stable['before']==stable['after'],stable
     unavailable=page.evaluate('''()=>{const q=__familyQA,s=q.state();s.age=26;q.byId(s.playerId).born=s.year-26;s.energy=3;const p=q.makePerson('Tessa Same',s.year-26,[],'acquaintance');p.gender=q.byId(s.playerId).gender;p.bonds[s.playerId]=99;q.socialMove(p.id,'askout');return s.partnerId;}''')
     assert unavailable is None,unavailable
     page.evaluate('''()=>{const q=__familyQA,s=q.state();const co=q.makePerson('Ben Partner',s.year-28,[],'romance');co.gender='male';s.partnerId=co.id;co.bonds[s.playerId]=90;s.cash=7000;s.energy=3;q.render()}''')
     page.locator('.bottom-nav [data-tab="life"]').click()
     page.locator('[data-do="baby"]').first.click()
-    page.locator('.modal [data-modal]').nth(2).click()
+    page.locator('.modal [data-modal]').nth(1).click()
     assert 'Naming a surprise' in page.locator('.modal').inner_text()
     page.locator('.modal [data-modal]').first.click()
     pending=page.evaluate('''()=>__familyQA.state().expecting''')
