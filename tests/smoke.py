@@ -10,7 +10,7 @@ rewrites=(root/'assets/legacy-rewrites.js').read_text()
 childhood=(root/'assets/childhood.js').read_text()
 outcomes=(root/'assets/legacy-outcomes.js').read_text()
 later=(root/'assets/later-life.js').read_text()
-assert all((root/p).is_file() for p in ['assets/passive-life.js','assets/career-stories.js','assets/hobby-world.js','assets/world-social.js','assets/personality-world.js','tests/world_social_smoke.py','tests/ripples_smoke.py','index.html','assets/styles.css','assets/game.js','assets/legacy-rewrites.js','assets/childhood.js','assets/later-life.js','assets/legacy-outcomes.js','assets/editorial-pass.js','assets/oddities.js','README.md','AGENTS.md'])
+assert all((root/p).is_file() for p in ['assets/passive-life.js','assets/career-stories.js','assets/hobby-world.js','assets/world-social.js','assets/personality-world.js','tests/world_social_smoke.py','tests/ripples_smoke.py','index.html','assets/styles.css','assets/game.js','assets/legacy-rewrites.js','assets/childhood.js','assets/later-life.js','assets/legacy-outcomes.js','assets/editorial-pass.js','assets/oddities.js','assets/family-events.js','README.md','AGENTS.md'])
 assert html.index('passive-life.js')<html.index('game.js') and html.index('career-stories.js')<html.index('game.js')
 assert 'world-social.js' in html and html.index('world-social.js')<html.index('game.js')
 assert 'editorial-pass.js' in html and 'oddities.js' in html and html.index('editorial-pass.js')<html.index('oddities.js')<html.index('game.js')
@@ -38,3 +38,9 @@ assert 'eyesColor' in js and 'hairVariant' in js and 'data-setup=\"randomName\"'
 assert 'Uses confidence' not in js and 'Your choices shape later events' not in js and 'consequences can stick' not in js
 assert 'function childhoodSequelText' in js and 'firstChoice' in js
 print(f'PASS: {len(old_ids)} legacy scene rewrites, 58+ child events and 5 arcs, explicit DiceBear, name randomizer, saves, scripts.')
+
+assert 'family-events.js' in html and html.index('family-events.js')<html.index('game.js')
+assert 'familyRelation(a,b)' in js and 'annualFamilyPass()' in js and 'data-gender' in js
+assert 's.familyBirthNotice' in js and 'function pregnancyActivity()' in js
+assert 'function isPeer(' in js and 'function babyNames(' in js
+print('PASS: family graph, gender creator, age-safe friendships, pregnancy and birth controls')

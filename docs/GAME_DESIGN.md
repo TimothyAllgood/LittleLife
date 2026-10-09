@@ -82,3 +82,13 @@ A readable outcome displays signed changes to skills, grades, reputation, health
 The weirdest stories work when something ordinary gives them a foothold: a school mascot ransom note, a pigeon treated as a paying tenant, a giant pie with no table large enough to support it, a hen winning a chess match. Players should have genuinely different ways of behaving inside each scene, not simply a good/bad morality button. A little failure may be the funniest outcome; a kind choice may lead to a minor mistake without punishing kindness.
 
 One-off stories should not hijack long-running mysteries in progress. Very rare time anomalies and cryptid sightings belong in a much smaller pool than the everyday jokes and mishaps. Follow-ups should quote the original person, object, lie, or triumph rather than vaguely mentioning "an old choice." Every event deserves to be worth reading aloud.
+
+## Families with names and consequences
+
+A family is a graph, not a counter. It includes parents and siblings, grandparents on both sides, aunts and uncles, cousins, children and descendants, with marriage and in-laws. Relations are shown relative to the playable character and should change naturally across generations. Every relative is a person with a stored name, appearance, age, gender, personality, and bond.
+
+There is now a creator gender choice of female or male. New romantic relationships are opposite-sex only, with sensible age gates: no romance between children and adults, and younger characters may interact romantically only with same-age peers. Keep the subject age-appropriate.
+
+Pregnancy is a small playable story rather than an instant child-spawning button: a couple can plan a child, reveal the gender or leave it as a surprise, name the baby, throw a shower, attend a checkup, assemble a nursery and experience a birth on the next birthday. Adopted children also have their own names and genders. Do not spawn five babies in one year. Family members may have significant experiences independent of the player.
+
+Family stories should span the full emotional range: deliberate kindness, selfishness, jealousy, grief, joy, practical problems and absurdism. “My cousin stole my controller” is a story; “something happened with a family member” is not.

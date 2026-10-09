@@ -34,7 +34,7 @@ with sync_playwright() as p:
     before=saved['value']
     market=page.evaluate('''()=>{const q=__worldQA,x=q.state(),evt=window.LITTLE_LIFE_WORLD_SOCIAL.news.find(x=>x.id==='bull-run');q.worldNewsItem(evt);return q.investmentValue()}''')
     assert market>before,(market,before)
-    person=page.evaluate('''()=>{const q=__worldQA,p=q.makeAcquaintance(false);q.save();return {id:p.id,name:p.name,interest:p.npc.interest,quirk:p.npc.quirk}}''')
+    person=page.evaluate('''()=>{const q=__worldQA,p=q.makeAcquaintance(false);p.gender=q.byId(q.state().playerId).gender==='female'?'male':'female';q.save();return {id:p.id,name:p.name,interest:p.npc.interest,quirk:p.npc.quirk}}''')
     assert person['name'] and person['interest'] and person['quirk'],person
     page.evaluate('''(id)=>{__worldQA.state().energy=3;__worldQA.peopleModal(id)}''',person['id'])
     choices=page.locator('.modal [data-modal]').all_text_contents()

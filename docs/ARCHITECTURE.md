@@ -103,3 +103,13 @@ Scripts run `story-pass.js` → `editorial-pass.js` → `oddities.js` → `game.
 One selector wrapper samples rare scenes at an overall 0.2% chance per eligible birthday; otherwise it can sample ordinary incidents at 36%. It keeps scheduled arc chapters from being displaced. A resolution wrapper chooses among authored success/failure variant sentences before delegating to the existing consequence engine. No new save schema, server, API, runtime generation or remote asset is required.
 
 Testing: `node tests/editorial_catalog.cjs` in CI, and `python3 tests/oddities_smoke.py` with Chromium/Playwright locally. See `docs/EDITORIAL_AUDIT.md` for coverage and known debt.
+
+## Family graph and pregnancy integration
+
+`assets/family-events.js` registers authored family events before `assets/game.js` starts. `assets/game.js` extends save-v2-compatible gameplay with `gender` on person records, lazy `familyWorld` migration, kinship traversal (`familyAncestors`, `familyRelation`, `familyRole`), family-specific age-up news (`annualFamilyPass`), named story targeting, marriage/romance guards, and baby planning / naming.
+
+`ensureFamilyData` initializes missing gender for legacy saves and adds grandparents, aunts/uncles and cousin links once (`familyWorld.initialized`). Do not repeatedly create relatives. The initial root's parents are assigned mother/father; across inherited generations the relationship labels recalculate relative to the new player. Person IDs are never regenerated.
+
+Pregnancy state persists in `s.expecting` with `gender`, `surprise`, `name`, `dueYear` and `coParentId`. A one-year family-planning guard remains in place. On birth, the gender is assigned before the follow-up announcement. The annual age-up call resolves the birth before selecting other annual stories. Players can rename the baby at birth. Family branches use `data-person` buttons and the same `peopleModal` handler as the People page; accessible CSS lives in `assets/styles.css`.
+
+Automated coverage: `tests/family_smoke.py` (Playwright/Chromium, four viewport sizes), plus preexisting core, social, personality, childhood, hobby, later-life and combat tests. Keep Javascript syntax validation for `assets/family-events.js` in Pages CI.

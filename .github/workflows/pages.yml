@@ -37,6 +37,7 @@ jobs:
           node --check assets/story-pass.js
           node --check assets/editorial-pass.js
           node --check assets/oddities.js
+          node --check assets/family-events.js
           node tests/editorial_catalog.cjs
           node --check assets/legacy-outcomes.js
           python3 tests/smoke.py

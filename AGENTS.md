@@ -94,3 +94,14 @@ Preserve old IDs. New scenes use stable `odd_` IDs, age ranges and three real de
 Every newly drafted event must clear a basic specificity review: identify who did what, to which thing, where, with an actual consequence. “Someone,” “something,” “lesson learned,” and “it works” are review flags, not automatic banned words. Generic summary prose is inadequate for an event ending. Keep injuries and tragedy non-graphic; do not mock bereavement. Different choices should lead to distinct results, not a palette swap of the same conclusion.
 
 Add `node tests/editorial_catalog.cjs`, `python3 tests/oddities_smoke.py`, and all existing browser suites to local QA. Update `docs/EDITORIAL_AUDIT.md` with exactly what was revised rather than claiming a complete rewrite after inspecting only one group. Ensure new scripts remain relative to the GitHub Pages base path.
+
+## Family / gender expansion rules
+
+- New person records have `gender: 'male'|'female'`. Keep gender persistent and do not recalculate it on reload. Old v2 saves are migrated in place without changing the user's authored names or erasing family links.
+- In this game's current relationship design, **new romantic relationships are heterosexual only**. Check stored gender, age, and blood/in-law relationships for flirt, dating, marriage and generated NPC pairings. Minor/minor romance only with peers; no adult/minor romantic options. Preserve existing family save data.
+- Aunts/uncles, grandparents, cousins, nieces/nephews and descendants must follow actual parent IDs, not a loose `kind:'family'` flag. `familyRelation(a,b)` and `familyRole(p)` are the display sources of truth.
+- The tree and the People page must call the same `peopleModal(id)` for living characters. Don't create a separate, weaker relationship modal for the tree. Preserve touch and keyboard accessibility.
+- The baby naming flow selects a boy, a girl, or an explicit surprise. The chosen gender is preserved through the next birthday and persisted on the born character. Do not allow multiple baby additions in the same player year. Keep prenatal content wholesome and non-graphic.
+- A sleepover must have a living friend of approximately the player's age and be available only from ages 8–17. Do not turn an elder acquaintance into a peer by accident on age-up.
+- Add family scenes with named relatives, vivid scenarios and meaningful outcomes, not anonymous “family member” interactions. Unique event IDs must remain stable.
+- Run `python3 tests/family_smoke.py` in addition to prior browser suites after family, gender, or friendship changes.
