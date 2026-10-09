@@ -89,3 +89,18 @@ There are **162 authored career incidents across 81 career paths**, plus an inte
 The catalog lives in `assets/passive-life.js` and `assets/career-stories.js`. The gameplay hooks and persistence live in `assets/game.js`. No player account or backend is required.
 
 For local regression testing, run `python3 tests/ripples_smoke.py` with Playwright/Chromium installed, plus the existing smoke tests.
+
+## Hobbies: choosing a passion and getting better
+
+The **Activities → Your hobbies** book now groups pursuits into Favorites, Games & Performance, Making Things, and Nature & Adventure. Expand a shelf, choose an activity, then pick the actual thing to do. A successful attempt can bring acclaim or a new opportunity; a disastrous one still teaches you something. The outcome explicitly shows skill before, after, and amount gained.
+
+- **Music:** choose an instrument without spending a turn, then practice, write songs in a named genre (saved to your portfolio and repertoire), perform, and potentially join a band. Writing a song awards Music experience; instrument selection by itself does not.
+- **D&D:** build a named character and choose a class and campaign without spending a turn. Playing sessions uses a turn, awards Tabletop skill, increases the character's level and quest count, and changes the party's trust based on the result. Rogues, fighters, paladins, and bards have advantages on different approaches.
+- **Twenty additional pursuits:** fencing, staged historical dueling, archaeology, birdwatching, stage magic, pottery, woodworking, sewing, languages, hiking, geocaching, robotics, fishing, horse riding, calligraphy, stand-up comedy, sailing, model making, debate, and fossil hunting. Each has three specific situations, alternate results, and occasional twists.
+- Ten existing extra hobbies also get new choices, beyond their original prompts. You may enter skill competitions, reach mastery, get paid for occasional high-level work as an adult, gain school or popularity benefits, receive a callback from an earlier hobby incident, or become rusty if you neglect a trained skill for years.
+- Niche skills can now contribute up to **18 extra points** in compatible job applications (e.g., archaeology helps a treasure hunter, birdwatching helps a wildlife photographer, robotics helps an engineer). Work applications display the hobby bonus where applicable. These are bonuses, not guaranteed hiring.
+- Your best skills and latest memorable hobby moment now appear on the Home page when you have developed a hobby.
+
+Older saves load without migration and initialize the additional `hobbyWorld` data only when needed. New generations get their own personal hobby histories; the family tree remains intact. This is a game, not a lesson in real-life medical or sports safety: dangerous pursuits are written as supervised, teen-suitable activities.
+
+Tests: `python3 tests/hobby_smoke.py` in addition to the existing smoke suites. The new data file `assets/hobby-world.js` is parsed by the GitHub Pages workflow with `node --check`.

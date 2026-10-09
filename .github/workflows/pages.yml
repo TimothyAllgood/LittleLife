@@ -31,6 +31,7 @@ jobs:
           node --check assets/later-life.js
           node --check assets/passive-life.js
           node --check assets/career-stories.js
+          node --check assets/hobby-world.js
           node --check assets/legacy-outcomes.js
           python3 tests/smoke.py
       - name: Configure Pages

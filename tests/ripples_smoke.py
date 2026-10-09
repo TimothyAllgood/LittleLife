@@ -3,7 +3,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 root=Path(__file__).resolve().parent.parent
 src=(root/'index.html').read_text().replace('<link rel="stylesheet" href="./assets/styles.css">','<style>'+(root/'assets/styles.css').read_text()+'</style>')
-for p in ['assets/legacy-rewrites.js','assets/childhood.js','assets/later-life.js','assets/legacy-outcomes.js','assets/passive-life.js','assets/career-stories.js','assets/game.js']:
+for p in ['assets/legacy-rewrites.js','assets/childhood.js','assets/later-life.js','assets/legacy-outcomes.js','assets/passive-life.js','assets/career-stories.js','assets/hobby-world.js','assets/game.js']:
     code=(root/p).read_text()
     if p=='assets/game.js':
         code=code.replace('startingLook=newLook();load();', '''window.__ripplesQA={state:()=>s,newGame,ageUp,annualLifeRipples,annualWorkRipples,annualCareerChoice,annualSkillMilestones,rippleGate,quitCurrentJob,askForPromotion,outcomeModal,careerResolution,careerSceneRoll,save};startingLook=newLook();load();''')
