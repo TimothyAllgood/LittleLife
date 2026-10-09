@@ -3,7 +3,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 root=Path(__file__).resolve().parent.parent
 html=(root/'index.html').read_text().replace('<link rel="stylesheet" href="./assets/styles.css">','<style>'+(root/'assets/styles.css').read_text()+'</style>')
-scripts=['legacy-rewrites','childhood','later-life','legacy-outcomes','passive-life','career-stories','hobby-world','world-social','game']
+scripts=['legacy-rewrites','childhood','later-life','legacy-outcomes','passive-life','career-stories','hobby-world','world-social','personality-world','game']
 for src in scripts:
     path='assets/'+src+'.js';code=(root/path).read_text()
     if src=='game':

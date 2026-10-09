@@ -10,9 +10,11 @@ rewrites=(root/'assets/legacy-rewrites.js').read_text()
 childhood=(root/'assets/childhood.js').read_text()
 outcomes=(root/'assets/legacy-outcomes.js').read_text()
 later=(root/'assets/later-life.js').read_text()
-assert all((root/p).is_file() for p in ['assets/passive-life.js','assets/career-stories.js','assets/hobby-world.js','assets/world-social.js','tests/world_social_smoke.py','tests/ripples_smoke.py','index.html','assets/styles.css','assets/game.js','assets/legacy-rewrites.js','assets/childhood.js','assets/later-life.js','assets/legacy-outcomes.js','README.md','AGENTS.md'])
+assert all((root/p).is_file() for p in ['assets/passive-life.js','assets/career-stories.js','assets/hobby-world.js','assets/world-social.js','assets/personality-world.js','tests/world_social_smoke.py','tests/ripples_smoke.py','index.html','assets/styles.css','assets/game.js','assets/legacy-rewrites.js','assets/childhood.js','assets/later-life.js','assets/legacy-outcomes.js','README.md','AGENTS.md'])
 assert html.index('passive-life.js')<html.index('game.js') and html.index('career-stories.js')<html.index('game.js')
 assert 'world-social.js' in html and html.index('world-social.js')<html.index('game.js')
+assert 'personality-world.js' in html and html.index('world-social.js')<html.index('personality-world.js')<html.index('game.js')
+assert 'personalitySkillBoost' in js and 'personalitySocialModifier' in js and 'personalityAnnual' in js
 assert 'hobby-world.js' in html and html.index('hobby-world.js')<html.index('game.js')
 assert 'annualLifeRipples()' in js and 'annualCareerChoice()' in js and 'quitCurrentJob' in js and 'askForPromotion' in js
 assert 'assets/styles.css' in html and 'assets/legacy-rewrites.js' in html and 'assets/game.js' in html

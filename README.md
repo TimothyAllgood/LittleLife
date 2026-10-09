@@ -119,3 +119,16 @@ There are **16 authored NPC story encounters**, selectable from an individual pe
 Data: `assets/world-social.js`. Runtime: final section of `assets/game.js`. Compatibility: existing `version: 2` saves add `s.world`, `s.socialWorld`, and `p.npc` lazily, without deleting existing data. The global world remains across family generations; personal acquaintances are refreshed when control passes to an heir.
 
 Run `python3 tests/world_social_smoke.py` with Playwright and Chromium to test world market effects, investing, NPC state, social branches, named event roles, save/reload, several age-ups and layouts at 320, 390, 768 and 1024 pixels. Test cases supplement actual long-life playtesting; randomness means not every storyline is seen in one simulation.
+
+
+## Personalities & strange endings (October 2026)
+
+A character's personality is **not just a badge**. The character creator now separates an initial aptitude (Curious/Creative/Social/Sporty) from the character's temperament, with 16 selectable starting identities. Across the game there are 46 authored disposition types, all usable by NPCs. Each has a distinctive habit, a weakness, and five underlying tendencies: heart, nerve, focus, wonder and mischief.
+
+- **Relationships:** NPCs react differently to conversation, gifts, invitations, insults, gossip, apologies and romance. Compatibility and trust alter success odds as well as future bonds. A grudge-holder is slower to forgive; an outgoing acquaintance is easier to invite; kind people take insults harder; NPCs can drift apart or get closer in their own time.
+- **Life-long consequences:** Temperament affects school grades, hobby performance, job eligibility and the success of certain event choices. Older players feel these differences too. Values nudge probabilities rather than guaranteeing outcomes, and related activity effects gradually shift the five tendencies.
+- **Character growth:** The personal chapter on Home has a compact personality portrait and five tendencies. A year-by-year *self-discovery* activity offers twelve different authored dilemmas across childhood, teenage, adult and senior life. It consumes one activity when a choice is made and can eventually lead to an **optional change of primary personality**. The same fixed talent-show prompt is not repeated each year.
+- **New story content:** Fourteen branching age-up episodes have three different choices each, with skill checks, failure outcomes and callbacks. Annual interactions with named family/friends can reflect their habits as well as your own. There are also twelve eccentric, **rare, non-graphic** potential causes of death, logged in the journal and family history. They are not an invitation to harm anyone in real life.
+- **Save compatibility:** No new save key or account is required. Older characters without personality data are upgraded lazily, without replacing the existing person or family tree. The family legacy retains a named cause of death, while a new generation gets its own growth data. No existing save is intentionally reset.
+
+Static checks: `node --check assets/personality-world.js && node --check assets/game.js && python3 tests/smoke.py`. Interactive local regression: `python3 tests/personality_smoke.py` (Chromium + Playwright), followed by the existing browser, world, hobby, career, passive-year and lifetime suites.

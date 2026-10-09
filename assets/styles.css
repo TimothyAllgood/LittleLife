@@ -222,3 +222,25 @@ html[data-theme="dark"] .hobby-option{background:#252332;border-color:#494559}
 html[data-theme="dark"] .hobby-identity-skills span{background:#262333;border-color:#494559}
 /* A folded newspaper, not a financial dashboard. */
 .world-paper{overflow:hidden}.world-paper .section-top{gap:8px}.world-story{padding:13px 0;border-bottom:1px dashed var(--line);display:grid;gap:4px}.world-story small{text-transform:uppercase;letter-spacing:.07em;font-weight:750;color:var(--muted);font-size:10px}.world-story strong{font-size:1.01rem;line-height:1.3}.world-story p{margin:2px 0 0;font-size:.92rem;line-height:1.45;color:var(--ink)}.world-indices{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 3px}.world-indices span{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 11px;border-radius:12px;background:var(--lavender);font-size:.83rem;min-width:125px}.world-indices b{font-variant-numeric:tabular-nums}.world-invest{margin-top:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}.world-invest .btn-row{margin:0}.world-paper .heading{margin:0}@media(max-width:450px){.world-indices span{flex:1 1 42%;min-width:0}.world-invest{align-items:flex-start}.world-invest .btn-row{width:100%}.world-invest .btn-row button{flex:1}.world-story{padding:10px 0}}
+
+/* Personality is part of the story, not a static leaderboard. */
+.persona-pick{margin-top:16px}
+.persona-pick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}
+.personality-option{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:11px;text-align:left;display:flex;flex-direction:column;gap:3px;min-width:0;min-height:66px}
+.personality-option b{text-transform:capitalize;font-size:13px;color:var(--ink)}
+.personality-option small{font-size:11px;line-height:1.35;color:var(--muted);overflow-wrap:anywhere}
+.personality-option.selected{border:2px solid var(--violet);padding:10px;background:var(--lavender)}
+.persona-flaw{font-size:12px;color:var(--muted);margin:9px 0 14px;line-height:1.5}
+.persona-mini{font-size:11px;margin-top:7px;max-width:210px;color:var(--muted);line-height:1.45;overflow-wrap:anywhere}
+.persona-card .heading{text-transform:capitalize}
+.persona-voice{color:var(--ink);font-size:13px;line-height:1.55;margin:8px 0 12px}
+.persona-bars{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:10px 0 14px}
+.persona-stat{font-size:10px;min-width:0;color:var(--muted)}
+.persona-stat span{display:block;text-align:center;margin-bottom:4px;white-space:nowrap}
+.persona-bar{height:7px;overflow:hidden;border-radius:7px;background:var(--line)}
+.persona-bar i{display:block;height:100%;border-radius:7px;background:var(--violet)}
+html[data-theme="dark"] .personality-option{background:#292638;border-color:#484357}
+html[data-theme="dark"] .personality-option.selected{background:#35304d;border-color:#b6a2fa}
+html[data-theme="dark"] .persona-bar{background:#474456}
+@media(min-width:800px){.persona-pick-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:390px){.persona-pick-grid{gap:6px}.personality-option{padding:9px;min-height:70px}.personality-option.selected{padding:8px}.persona-bars{gap:4px}.persona-stat{font-size:9px}}
