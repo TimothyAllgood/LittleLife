@@ -919,7 +919,7 @@ function renderStart(){const vbs=[['curious','🧠 Curious'],['creative','🎨 C
 function openModal(m){modal=m;renderModal();}
 function closeModal(){modal=null;renderModal();}
 function renderModal(){const root=$('modalRoot');if(!root)return;if(!modal){root.innerHTML='';return;}const m=modal;root.innerHTML=`<div class="modal-wrap" role="presentation"><section class="modal" role="dialog" aria-modal="true" aria-label="${esc(m.title)}"><div class="modal-symbol">${m.icon||'✨'}</div><h2>${esc(m.title)}</h2><p>${esc(m.text)}</p>${m.choices?.map((c,i)=>`<button class="choice" data-modal="${i}" ${c.disabled?'disabled':''}>${c.avatar?`<div class="choice-legacy"><div class="face-small">${avatar(c.avatar,c.age||12)}</div><div>${esc(c.label)}${c.note?`<small>${esc(c.note)}</small>`:''}</div></div>`:esc(c.label)+(c.note?`<small>${esc(c.note)}</small>`:'')}</button>`).join('')||''}${m.nonDismiss?'':`<button class="modal-close" data-close="1">${m.choices?.length?'Maybe later / Close':'Close'}</button>`}</section></div>`;}
-function render(){if(styleMode&&s){renderStyleEditor();return;}if(!s){renderStart();return;}let page=tab==='activities'?activities():tab==='people'?peopleTab():tab==='life'?lifeTab():tab==='work'?workTab():tab==='tree'?treeTab():tab==='journal'?journalTab():home();$('app').innerHTML=`<div class="shell"><header class="top"><div class="logo"><div class="logo-mark">🌱</div><div><h1>Little Life <span style="font-size:.52em;color:#7850ba">5</span></h1><p>Another year, another terrible idea.</p></div></div><div class="top-actions"><span class="year-pill">📅 ${s.year}</span><button class="icon-btn" data-do="theme" aria-label="Toggle light and dark mode" title="Toggle light or dark mode">${chosenTheme==='dark'?'☀️':'🌙'}</button><button class="icon-btn" data-do="settings" aria-label="Game settings">⚙️</button></div></header><div class="layout">${sidebar()}<main class="content">${page}</main></div></div><nav class="bottom-nav" aria-label="Main menu">${[['home','🏠','Home'],['activities','🌈','Activities'],['people','🫶','People'],['life','🏡','Life'],['work','💼','Work'],['tree','🌳','Tree'],['journal','📖','Journal']].map(([k,ico,label])=>`<button class="tab ${tab===k?'active':''}" data-tab="${k}" aria-current="${tab===k?'page':'false'}"><span>${ico}</span>${label}</button>`).join('')}</nav>`;renderModal();}
+function render(){if(styleMode&&s){renderStyleEditor();return;}if(!s){renderStart();return;}let page=tab==='activities'?activities():tab==='people'?peopleTab():tab==='life'?lifeTab():tab==='work'?workTab():tab==='tree'?treeTab():tab==='journal'?journalTab():home();$('app').innerHTML=`<div class="shell"><header class="top"><div class="logo"><div class="logo-mark">🌱</div><div><h1>Little Life <span style="font-size:.52em;color:#7850ba">5</span></h1><p>Another year, another terrible idea.</p></div></div><div class="top-actions"><span class="year-pill">📅 ${s.year}</span>${s.flags.ended?'':`<button class="btn top-age-button" data-do="age" aria-label="Age up one year">🎂 Age +1 <span aria-hidden="true">→</span></button>`}<button class="icon-btn" data-do="theme" aria-label="Toggle light and dark mode" title="Toggle light or dark mode">${chosenTheme==='dark'?'☀️':'🌙'}</button><button class="icon-btn" data-do="settings" aria-label="Game settings">⚙️</button></div></header><div class="layout">${sidebar()}<main class="content">${page}</main></div></div><nav class="bottom-nav" aria-label="Main menu">${[['home','🏠','Home'],['activities','🌈','Activities'],['people','🫶','People'],['life','🏡','Life'],['work','💼','Work'],['tree','🌳','Tree'],['journal','📖','Journal']].map(([k,ico,label])=>`<button class="tab ${tab===k?'active':''}" data-tab="${k}" aria-current="${tab===k?'page':'false'}"><span>${ico}</span>${label}</button>`).join('')}</nav>`;renderModal();}
 function confirmReset(){openModal({icon:'🌱',title:'Start another story?',text:'This creates a completely new family and replaces the current save in this browser. Export your current game first if you want to keep it.',choices:[{label:'Keep this family',run:()=>{}},{label:'Yes, create a new life',run:()=>{try{localStorage.removeItem(KEY);localStorage.removeItem(OLD_KEY);}catch(_){}s=null;styleMode=false;editLook=null;startingLook=newLook();startingAge=12;startingPersonality='curious';draftName='';tab='home';render()}}]});}
 function exportGame(){try{const blob=new Blob([JSON.stringify(s,null,2)],{type:'application/json'}),href=URL.createObjectURL(blob),a=document.createElement('a');a.href=href;a.download='little-life-family-'+s.year+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(href),1500);say('Your family save is ready!')}catch(e){say('The save export did not work in this browser.')}}
 function importGame(){const input=document.createElement('input');input.type='file';input.accept='.json,application/json';input.onchange=async()=>{if(!input.files?.[0])return;try{const incoming=JSON.parse(await input.files[0].text());if(incoming.version===1&&incoming.name){migrateOld(incoming);}else if(incoming.version===2&&incoming.people?.some(p=>p.id===incoming.playerId)&&incoming.stats&&incoming.skills&&Number.isInteger(incoming.year)){s=incoming;ensureExtras();save();}else throw Error('Wrong save format');tab='home';render();say('Your family save was restored.')}catch(e){say('That is not a valid Little Life save.')}};input.click();}
@@ -2195,5 +2195,154 @@ passAway=function(){if(!s||s.flags.ended)return;
 for(const scene of PD.scenes){const swap=text=>text.replace(/\{npc\}/g,'{friend}');const cs=scene.choices.map(([label,skill,difficulty,good,bad,ok,no,axis,tilt])=>({v3:true,label:swap(label),skill,difficulty,good:swap(good),bad:swap(bad),common:{alignment:tilt},ok:{...ok,follow:{years:2,text:swap(`{friend} still talks about ${scene.title.toLowerCase()}. You discover that old decisions travel a surprising distance.`),effects:{happiness:3,confidence:2}}},no:{...no},personaAxis:axis}));
  events.push({...scene,period:scene.min<5?'baby':scene.min<8?'child':'context',title:scene.title,text:swap(scene.setup),choices:cs,when:state=>state.age>=scene.min&&state.age<=scene.max&&!state.eventsSeen['persona-'+scene.id],id:'persona-'+scene.id});}
 
-startingLook=newLook();load();if(s)ensureExtras();render();
+// THE STORY & COMBAT PASS — all state stays in the v2 save; no network requests.
+const SP=window.LITTLE_LIFE_STORY_PASS||{edits:{},scenes:[]};
+for(const e of events){
+ const edit=SP.edits[e.id];if(!edit)continue;
+ if(edit.title)e.title=edit.title;if(edit.text)e.text=edit.text;
+ if(edit.choices){edit.choices.forEach((update,i)=>{const c=e.choices[i];if(c){[c.label,c.good,c.bad,c.twist]=update;}});}
+}
+for(const e of events){
+ const setbacks=SP.v4Setbacks?.[e.id];if(!setbacks)continue;
+ setbacks.forEach((text,i)=>{if(e.choices[i])e.choices[i].bad=text;});
+}
+for(const row of SP.scenes){
+ const [id,min,max,title,icon,text,options]=row;
+ events.push(NE('story_'+id,min<5?'baby':max<=11?'child':max<=17&&min>=12?'teen':'context',icon,title,text,options.map(([label,skill,good,bad,ok,no],i)=>({v3:true,label,skill,difficulty:43+i*7,good,bad,ok,no,common:{}})),ss=>ss.age>=min&&ss.age<=max&&(ss.eventsSeen['story_'+id]||0)<2));
+}
+
+// A persistent, multi-round scuffle, with consequences for *both* characters.
+// Fights stay serious enough to matter, even if a ridiculous detail occurs along the way.
+function encounterOpponent(){
+ const other=makePerson(nameNotUsed(),s.year-s.age+pick([-1,0,0,1]),[],'friend');
+ other.bonds[s.playerId]=25+r(15);setStatus(other,'rival');
+ return other;
+}
+function fightStart(id,source='people',protectId=null){
+ if(!s||s.flags.ended||s.activeFight)return;
+ if(source==='people'&&s.energy<1)return say('You have no time left this year.');
+ const p=byId(id);if(!p||!alive(p))return say('That person has gone home.');
+ if(s.age<11)return say('You are too young for this kind of fight.');
+ if(source==='people'){s.energy--;}
+ const places=s.age<18?['outside the gym','by the bicycle racks','beside the cafeteria doors','near the basketball court']:['outside the corner shop','in a crowded parking lot','at the bus stop','during a festival'];
+ s.activeFight={opponent:p.id,protectId,source,place:pick(places),stage:1,year:s.year,started:false,choice:null,beat:'',rounds:[],hurt:null,themHurt:null};
+ save();render();fightStageModal();
+}
+function fightStageModal(){
+ if(!s?.activeFight||s.flags.ended)return;
+ const f=s.activeFight,p=byId(f.opponent),name=p?.name||'the other person';
+ if(!p||!alive(p)){s.activeFight=null;save();render();return;}
+ if(f.stage===1){
+ const friend=byId(f.protectId);
+ const intro=friend?`${name} grabs ${friend.name} by the collar ${f.place}. ${friend.name} is pressed against a locker and a crowd has formed.`:
+ `${name} squares up to you ${f.place}. ${name.split(' ')[0]} is furious about an argument that started earlier. Two people have already pulled out their phones.`;
+ openModal({icon:'🥊',title:`Things get ugly with ${name}`,text:intro+' The first thing you do could end the whole mess—or make it much worse.',nonDismiss:true,choices:[
+   {label:'🕊️ Back away and tell them to stop',run:()=>fightFirst('leave')},
+   {label:friend?'🛡️ Get between them and your friend':'🛡️ Keep your guard up and make space',run:()=>fightFirst('defend')},
+   {label:'🗣️ Try to talk them down',run:()=>fightFirst('talk')},
+   {label:'🥊 Throw the first punch',run:()=>fightFirst('strike')}
+ ]});return;}
+ if(f.stage===2){
+ openModal({icon:'💥',title:'The crowd goes quiet',text:f.beat,nonDismiss:true,choices:[
+   {label:'🚶 Try to end this and get clear',run:()=>fightFinish('exit')},
+   {label:'🛡️ Protect yourself and wait for help',run:()=>fightFinish('protect')},
+   {label:'🥊 Swing back and try to win',run:()=>fightFinish('retaliate')}
+ ]});
+ }
+}
+function fightFirst(choice){
+ const f=s.activeFight,p=byId(f?.opponent);if(!f||!p)return;
+ f.started=choice==='strike';f.choice=choice;const athlete=s.skills.sports||0,voice=(s.skills.social||0)+personalitySocialModifier(p,'talk');
+ const strong=prob(lim(37+(choice==='talk'?voice:athlete)*.42,14,87)/100);
+ const details={leave:[`${p.name} calls you a coward. You keep walking, and the spectators start drifting away.`,`${p.name} grabs your sleeve. You pull free, scraping your elbow on the rail.`],talk:[`You say ${p.name.split(' ')[0]}'s name twice and ask what they actually want. They look less certain of themselves.`,`${p.name} talks over you, then shoves you into a stack of empty drinks crates.`],defend:[`You get your hands up and step between ${p.name} and the exit. Their first shove glances off your shoulder.`,`${p.name} barrels forward. You hit the floor, catching yourself awkwardly on your wrist.`],strike:[`Your punch lands on ${p.name}'s upper arm. They stumble backward against a bench.`,`${p.name} ducks. Your hand connects with a noticeboard; your knuckles immediately regret your strategy.`]};
+ f.beat=details[choice][strong?0:1];f.rounds.push(f.beat);
+ if(choice==='leave'&&strong){fightFinish('exit',true);return;}
+ if(choice==='talk'&&strong&&prob(.55)){fightFinish('exit',true);return;}
+ f.stage=2;save();fightStageModal();
+}
+function fightFinish(move,early=false){
+ const f=s.activeFight,p=byId(f?.opponent);if(!f||!p)return;
+ const aggressive=f.started||move==='retaliate';const sport=s.skills.sports||0;
+ const luck=Math.min(.86,Math.max(.13,.39+(sport-42)*.005+(move==='protect'?.13:0)-(s.injury?.15:0)));
+ const held=early||prob(luck),witness=prob(.57),injured=prob(aggressive?.47:.17),serious=injured&&prob(aggressive?.15:.06);
+ let second='';
+ if(move==='exit'){second=held?pick([`You get behind a locked door while ${p.name} fumes outside. A teacher arrives with the worst possible timing for ${p.name}.`,`You step out of reach. ${p.name} takes a wild swing at the air and nearly hits a bin instead.`]):`You turn to leave. ${p.name} catches your shoulder and you stumble against a fence. A bystander gets between you.`;}
+ else if(move==='protect'){second=held?`You keep your arms up and stay on your feet until ${s.age<18?'Coach Webb':'two bystanders'} pull ${p.name} away.`:`${p.name} bumps you into a bench. Your lunch makes an unexpected return, and the crowd is suddenly much less enthusiastic.`;}
+ else {second=held?pick([`You land a wild hit to ${p.name}'s ribs. They double over and the fight ends when someone blows a whistle.`,`You catch ${p.name} on the shoulder, but lose your footing. Both of you end up sprawled beside a bin full of paper cups.`]):pick([`${p.name} clips your jaw with a glancing punch and you land on your backside. Your pride goes down first.`,`You lunge, miss, and catch a punch to the stomach. The sandwich you ate earlier considers making an exit.`]);}
+ f.rounds.push(second);
+ // Injury severity is dependent on aggression and luck. Even a 'win' can be costly.
+ let hurt=injured?(serious?pick(['concussion','fracture','internal']):pick(['bruise','sprain'])):null;
+ if(hurt&&!held&&prob(.30)&&!serious)hurt='fracture';
+ const otherHurt=aggressive&&prob(held?.51:.20)?pick(['a bruised shoulder','a bloody nose','a sore wrist','a sprained ankle']):null;
+ let outcome=`${f.rounds.join(' ')} `;
+ if(hurt){bruise(hurt);outcome+=hurt==='internal'?'A doctor diagnoses an internal injury. You spend several days in hospital. ':hurt==='concussion'?'A doctor confirms a concussion and orders plenty of rest. ':`You leave with ${s.injury?.name.toLowerCase()||'an injury'} and a medical bill. `;}
+ else{statChange({health:aggressive?-5:-2});outcome+='Nobody needs the hospital this time. ';}
+ if(otherHurt){p.injuries??=[];p.injuries.push({year:s.year,name:otherHurt,by:s.playerId});outcome+=`${p.name} needs treatment for ${otherHurt}. `;}
+ const bond=aggressive?-36:held?-7:-12;relate(p,bond);
+ if(aggressive||p.status?.[s.playerId]==='rival')setStatus(p,'rival');
+ const changes={stress:aggressive?13:8,confidence:held?5:-7,reputation:aggressive?(witness?-13:-5):held?5:-2,alignment:aggressive?-18:move==='protect'?4:2};
+ if(f.protectId&&held){const friend=byId(f.protectId);if(friend)relate(friend,aggressive?6:17);}
+ consequences(changes);
+ if(s.age<18){
+  if(aggressive&&witness){s.legal.suspensions++;s.grades=lim(s.grades-7);s.flags.fightHearing=true;outcome+='The school hands you a suspension, and the missed lessons lower your grades. ';}
+  else if(aggressive){s.legal.detention++;outcome+='You spend two lunches in detention. ';}
+  else{outcome+='A school counselor asks you and the witnesses to give statements. ';}
+ }else if(aggressive){
+  if(witness&&prob(.46)){s.legal.record++;s.cash=Math.max(0,s.cash-450);outcome+='Police issue a citation, and the fine takes $450 from your savings. ';}
+  else outcome+='A witness warns you that another incident could bring the police. ';
+ }
+ if(otherHurt&&aggressive&&prob(.24)){s.cash=Math.max(0,s.cash-180);outcome+=`${p.name} sends you a bill for $180 in treatment costs. `;}
+ const follow=pick([`${p.name} sees you months later and crosses to the other side of the street.`,`${p.name} tells everyone their version of the fight. Your friends have questions.`,`${p.name} sends an unexpected message asking whether you regret what happened.`]);
+ s.promises.push({year:s.year+1+r(3),icon:'📨',title:`After the fight with ${p.name}`,text:follow,effects:{stress:2,reputation:aggressive?-4:2}});
+ s.fightHistory??=[];s.fightHistory.push({year:s.year,age:s.age,opponent:p.id,aggressive,rounds:[...f.rounds],injury:hurt||null,opponentInjury:otherHurt,outcome});
+ if(s.fightHistory.length>80)s.fightHistory.shift();
+ s.activeFight=null;
+ addLog('🥊',`The fight with ${p.name}`,outcome,'fight');save();render();
+ // Very rare non-graphic fatal complications after serious injury, not a joke or routine outcome.
+ if(hurt==='internal'&&s.age>=14&&s.stats.health<=10&&prob(.03)){s.fate={icon:'🕊️',title:'Complications after the fight',text:`An injury sustained in a fight with ${p.name} leads to unexpected medical complications. The family gathers to remember ${me().name}.`,year:s.year};passAway();return;}
+ openModal({icon:hurt?'🏥':aggressive?'🥊':'🕊️',title:aggressive?'The fight is over':'You get out of there',text:outcome,choices:[{label:s.flags.bonusEventPending?'See what else happened this year →':'Keep going →',run:()=>{if(s.flags.bonusEventPending){s.flags.bonusEventPending=false;showAnnualEvent();}}}]});
+}
+const spPreviousSocialAction=socialAction;
+socialAction=function(id,kind){if(kind==='fight'){fightStart(id,'people');return;}return spPreviousSocialAction(id,kind);};
+const spPreviousResolveEvent=resolveEvent;
+resolveEvent=function(ev,c,ctx){
+ if((ev.id==='tnfight'&&/Fight them/i.test(c.label))||(ev.id==='tnhallway'&&/Pull them off/i.test(c.label))){
+  const protect=ev.id==='tnhallway'?ctx.friendId:null;
+  const target=encounterOpponent();fightStart(target.id,'event',protect);return;
+ }
+ return spPreviousResolveEvent(ev,c,ctx);
+};
+// Show the actual impact of a choice, including the specific relationship that changed.
+function impactSnapshot(){
+ if(!s)return null;
+ return {player:s.playerId,age:s.age,year:s.year,stats:{...s.stats},skills:{...s.skills},cash:s.cash,grades:s.grades,stress:s.stress,alignment:s.alignment||0,popularity:s.popularity||0,bonds:Object.fromEntries(s.people.map(p=>[p.id,{name:p.name,bond:p.bonds?.[s.playerId]??50}]))};
+}
+let impactTimer=null;
+function impactDiff(before){
+ if(!s||!before||before.player!==s.playerId)return [];
+ const changes=[];const add=(label,old,now,type)=>{const delta=Math.round((now||0)-(old||0));if(delta!==0)changes.push({label,delta,type});};
+ for(const [key,old] of Object.entries(before.stats))add(key,old,s.stats[key],'stat');
+ for(const [key,old] of Object.entries(before.skills))add(key,old,s.skills[key],'skill');
+ for(const key of ['grades','stress','alignment','popularity','cash'])add(key,before[key],s[key],key);
+ for(const [id,p] of Object.entries(before.bonds))if(byId(id))add(`${p.name.split(' ')[0]} · bond`,p.bond,bondTo(byId(id)),'bond');
+ return changes.sort((a,b)=>{const p={bond:7,skill:6,popularity:5,health:5,grades:5,alignment:4,stat:3,stress:2,cash:2};return (p[b.type]||0)-(p[a.type]||0)||Math.abs(b.delta)-Math.abs(a.delta)}).slice(0,8);
+}
+function paintImpact(changes){
+ const root=$('impactFeed');if(!root)return;
+ if(!changes.length){root.innerHTML='';return;}
+ const format=c=>`${c.delta>0?'+':''}${c.delta}${c.type==='cash'?' dollars':''} ${c.label==='cash'?'':c.label}`.trim();
+ const markup=changes.map(c=>`<span class="impact-chip ${c.delta>0?'up':'down'}">${c.delta>0?'▲':'▼'} ${esc(format(c))}</span>`).join('');
+ root.innerHTML=`<div class="impact-box"><strong>That changed things</strong><div class="impact-pills">${markup}</div></div>`;
+ const modalElement=document.querySelector('.modal');if(modalElement){modalElement.querySelector('.impact-inline')?.remove();const block=document.createElement('div');block.className='impact-inline impact-pills';block.setAttribute('aria-label','Effects of your choice');block.innerHTML=markup;const para=modalElement.querySelector('p');para?.insertAdjacentElement('afterend',block);}
+ clearTimeout(impactTimer);impactTimer=setTimeout(()=>{root.innerHTML='';document.querySelector('.impact-inline')?.remove();},6400);
+}
+document.addEventListener('click',e=>{
+ const btn=e.target.closest('button');if(!btn||!s||(!btn.closest('#app')&&!btn.closest('#modalRoot')))return;
+ if(btn.dataset.tab||btn.dataset.do==='theme'||btn.dataset.do==='settings'||btn.dataset.do==='style'||btn.hasAttribute('data-close'))return;
+ const before=impactSnapshot();setTimeout(()=>{const diff=impactDiff(before);if(diff.length)paintImpact(diff);},0);
+},true);
+const spPreviousRender=render;
+render=function(){spPreviousRender();if(s&&!styleMode&&!s.flags.ended){const age=document.querySelector('.top-age-button');if(age)age.disabled=!!s.activeFight;}};
+
+startingLook=newLook();load();if(s)ensureExtras();render();if(s?.activeFight&&!s.flags.ended)fightStageModal();
 })();

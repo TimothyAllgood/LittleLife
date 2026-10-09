@@ -244,3 +244,25 @@ html[data-theme="dark"] .personality-option.selected{background:#35304d;border-c
 html[data-theme="dark"] .persona-bar{background:#474456}
 @media(min-width:800px){.persona-pick-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:390px){.persona-pick-grid{gap:6px}.personality-option{padding:9px;min-height:70px}.personality-option.selected{padding:8px}.persona-bars{gap:4px}.persona-stat{font-size:9px}}
+
+/* An Age Up button that stays within reach on every playable tab. */
+.top {position:sticky;top:0;z-index:23;background:var(--bg);padding:10px 8px 12px;margin-top:-10px;isolation:isolate;box-shadow:0 4px 9px var(--bg)}
+.top-actions{display:flex;align-items:center;gap:7px;flex-wrap:nowrap}
+.top-age-button{white-space:nowrap;min-height:44px!important;padding:10px 15px!important;background:#8050ba!important;color:white!important;box-shadow:0 3px 0 #54336d;border:1px solid #70519a!important;font-size:13px!important;font-weight:900}
+.top-age-button:focus-visible{outline:3px solid #3b90d4;outline-offset:3px}
+@media(max-width:550px){.top{top:0;margin-bottom:10px;gap:7px}.top-actions{gap:5px}.top-age-button{min-height:42px!important;padding:9px 10px!important;font-size:12px!important}.top-age-button span{display:none}.year-pill{display:none!important}.logo p{display:none}.logo h1{font-size:19px}.top .icon-btn{min-width:34px;width:34px;height:38px;padding:3px}.logo-mark{width:34px;height:34px}}
+@media(max-width:365px){.top{padding-inline:0}.top-age-button{font-size:11px!important;padding:8px!important}.logo-mark{display:none}.logo h1{font-size:17px}}
+html[data-theme="dark"] .top{background:#1d1a22;box-shadow:0 5px 15px #1d1a22}
+html[data-theme="dark"] .top-age-button{background:#a579c8!important;color:#190f29!important;border-color:#c7a3df!important;box-shadow:0 3px 0 #654682}
+/* Immediate, accessible, explicit outcomes. The same values are shown beside modal results. */
+#impactFeed{position:fixed;right:max(12px,env(safe-area-inset-right));top:92px;z-index:38;pointer-events:none;max-width:min(430px,calc(100vw - 24px))}
+.impact-box{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:11px 12px;box-shadow:0 8px 28px #24233332}
+.impact-box strong{font-size:12px;display:block;margin-bottom:6px;color:var(--ink)}
+.impact-pills{display:flex;flex-wrap:wrap;gap:5px}
+.impact-chip{display:inline-flex;align-items:center;gap:3px;padding:4px 7px;font-weight:900;font-size:11px;border-radius:7px;border:1px solid transparent;font-variant-numeric:tabular-nums}
+.impact-chip.up{background:#d8f6e8;color:#106744;border-color:#a6dec3}
+.impact-chip.down{background:#ffe5e8;color:#a12b3d;border-color:#f4b8c0}
+.impact-inline{padding:11px 0 5px;border-bottom:1px solid var(--line);margin:5px 0 8px}
+html[data-theme="dark"] .impact-chip.up{background:#184b3d;color:#a4f6c8;border-color:#357b62}
+html[data-theme="dark"] .impact-chip.down{background:#592630;color:#ffc0cb;border-color:#a0515e}
+@media(max-width:550px){#impactFeed{top:78px;left:8px;right:8px}.impact-box{padding:8px}.impact-chip{font-size:10px}}

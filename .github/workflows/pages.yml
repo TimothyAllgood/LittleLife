@@ -34,7 +34,7 @@ jobs:
           node --check assets/hobby-world.js
           node --check assets/world-social.js
           node --check assets/personality-world.js
-          node --check assets/personality-world.js
+          node --check assets/story-pass.js
           node --check assets/legacy-outcomes.js
           python3 tests/smoke.py
       - name: Configure Pages
