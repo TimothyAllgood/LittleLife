@@ -104,3 +104,18 @@ The **Activities → Your hobbies** book now groups pursuits into Favorites, Gam
 Older saves load without migration and initialize the additional `hobbyWorld` data only when needed. New generations get their own personal hobby histories; the family tree remains intact. This is a game, not a lesson in real-life medical or sports safety: dangerous pursuits are written as supervised, teen-suitable activities.
 
 Tests: `python3 tests/hobby_smoke.py` in addition to the existing smoke suites. The new data file `assets/hobby-world.js` is parsed by the GitHub Pages workflow with `node --check`.
+
+
+## A world that keeps moving (World & People update)
+
+The **World outside** newspaper on Home shows world headlines with their consequences. The 34 authored world scenarios cover booming and crashing markets, housing costs, hiring freezes and construction booms, illness waves and medical discoveries, droughts and floods, peace and war abroad, scientific breakthroughs, conservation successes, festivals and more. Fictional situations have different details across appearances; some are extremely rare. A developing crisis usually lasts a few years and fades rather than permanently stacking penalties. School performance, employment, savings, cost of living and health can be affected. Headlines are logged in the Journal for the same saved family across generations.
+
+Adults can invest limited savings in the fictional **Town Index** from Home, or cash out. Its value changes year to year and when major economic news breaks. There is no brokerage, API, real-money trading or simulated debt; this is a simple risky *game* mechanic. One investment action is permitted per year. Shares and market history persist as part of the family's save.
+
+**People** now includes named acquaintances, in addition to friends, partners and relatives. Every NPC has a saved personality, interest, odd habit, ambition, an independent occupation and memories per playable character. Meeting someone does **not** automatically make them your partner; talk to them, invite them places, give gifts, make enemies, apologize, flirt or ask them on a date when appropriate. Relationship interactions spend an activity only when performed. Dating is age-gated, marriages remain adult-only, and all writing stays PG-13. Friends sometimes move, marry, have children or change careers without asking you. Grandparents, schoolmates, neighbors, coworkers and teachers used in event copy get persistent names rather than generic labels. Acquaintances may drift out of the contact list; historical people and important relationships remain in the save.
+
+There are **16 authored NPC story encounters**, selectable from an individual person's interaction screen, with three different approaches each. Skills, bond and trust modify odds; harmful choices can create rivals; memorable choices sometimes return in later-year journal entries. The older relationship actions and family tree remain.
+
+Data: `assets/world-social.js`. Runtime: final section of `assets/game.js`. Compatibility: existing `version: 2` saves add `s.world`, `s.socialWorld`, and `p.npc` lazily, without deleting existing data. The global world remains across family generations; personal acquaintances are refreshed when control passes to an heir.
+
+Run `python3 tests/world_social_smoke.py` with Playwright and Chromium to test world market effects, investing, NPC state, social branches, named event roles, save/reload, several age-ups and layouts at 320, 390, 768 and 1024 pixels. Test cases supplement actual long-life playtesting; randomness means not every storyline is seen in one simulation.
