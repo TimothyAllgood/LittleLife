@@ -4,7 +4,7 @@ from playwright.sync_api import sync_playwright
 
 root=Path(__file__).resolve().parent.parent
 html=(root/'index.html').read_text().replace('<link rel="stylesheet" href="./assets/styles.css">', '<style>'+(root/'assets/styles.css').read_text()+'</style>')
-assets=['legacy-rewrites','childhood','later-life','legacy-outcomes','passive-life','career-stories','hobby-world','world-social','personality-world','game']
+assets=['legacy-rewrites','childhood','later-life','legacy-outcomes','passive-life','career-stories','hobby-world','world-social','personality-world','story-pass','editorial-pass','oddities','game']
 for name in assets:
  path=f'assets/{name}.js'
  src=(root/path).read_text()

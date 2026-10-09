@@ -95,3 +95,11 @@ The authored catalog in `assets/story-pass.js` is loaded before the main engine.
 Fights are a save-persistent two-decision state machine: `s.activeFight` (`opponent`, `source`, `protectId`, `stage`, `rounds`) saves after every step; `s.fightHistory` archives injuries and decisions. `fightStart`, `fightFirst`, `fightStageModal`, and `fightFinish` only operate on real named `s.people` records. `fightFinish` updates NPC bonds/injuries, grades or fines, ongoing injury, journal and delayed `s.promises`. Reload resumes unfinished fights and Age Up is disabled during that modal. Violent escalation is not a free consequence-less success.
 
 A capture-phase click listener takes a snapshot of skills, stats, cash, grades, alignment, popularity, and all named NPC bonds. It schedules comparison after the click dispatch completes (using `setTimeout`) and displays at most eight *actual* non-zero deltas in `#impactFeed` and beside the resulting modal's description. The feed uses an aria-live region and retains no additional save keys.
+
+## Final editorial registry and strange events
+
+Scripts run `story-pass.js` → `editorial-pass.js` → `oddities.js` → `game.js`. Existing events are registered in earlier engine sections; the final editorial registry applies its keyed `title`, `text` and per-choice field changes without altering IDs or `when` eligibility. Oddities are registered with `odd_` IDs, age- and optional job/child/friend-gates, and a one-per-life seen check. Their options use the existing `SC`/`NE` resolution pipeline, so skill checks, stat deltas and choice-specific future promises work through normal saved state.
+
+One selector wrapper samples rare scenes at an overall 0.2% chance per eligible birthday; otherwise it can sample ordinary incidents at 36%. It keeps scheduled arc chapters from being displaced. A resolution wrapper chooses among authored success/failure variant sentences before delegating to the existing consequence engine. No new save schema, server, API, runtime generation or remote asset is required.
+
+Testing: `node tests/editorial_catalog.cjs` in CI, and `python3 tests/oddities_smoke.py` with Chromium/Playwright locally. See `docs/EDITORIAL_AUDIT.md` for coverage and known debt.

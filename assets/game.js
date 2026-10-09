@@ -2211,6 +2211,62 @@ for(const row of SP.scenes){
  events.push(NE('story_'+id,min<5?'baby':max<=11?'child':max<=17&&min>=12?'teen':'context',icon,title,text,options.map(([label,skill,good,bad,ok,no],i)=>({v3:true,label,skill,difficulty:43+i*7,good,bad,ok,no,common:{}})),ss=>ss.age>=min&&ss.age<=max&&(ss.eventsSeen['story_'+id]||0)<2));
 }
 
+// Editorial updates run LAST so new copy cannot be undone by earlier catalogs.
+// IDs and gameplay prerequisites are intentionally unchanged for existing saves.
+const EDITORIAL=window.LITTLE_LIFE_EDITORIAL||{edits:{}};
+for(const ev of events){
+ const patch=EDITORIAL.edits[ev.id];if(!patch)continue;
+ if(patch.title)ev.title=patch.title;
+ if(patch.text)ev.text=patch.text;
+ for(const [index,changes] of Object.entries(patch.choices||{})){
+  const option=ev.choices[Number(index)];if(!option)continue;
+  Object.assign(option,changes);
+ }
+}
+
+const ODD=window.LITTLE_LIFE_ODDITIES||{scenes:[]};
+for(const scene of ODD.scenes){
+ const id='odd_'+scene.id;
+ const period=scene.max<5?'baby':scene.max<12?'child':scene.max<18?'teen':'context';
+ const options=scene.choices.map((o,i)=>SC(o.label,o.good[0],o.bad[0],{
+  skill:o.skill,difficulty:42+i*6,
+  winVariants:o.good,loseVariants:o.bad,
+  ok:{...o.ok,...(o.follow?{follow:o.follow}:{})},no:{...o.no},common:{},
+ }));
+ events.push(NE(id,period,scene.icon,scene.title,scene.text,options,ss=>{
+  if(ss.age<scene.min||ss.age>scene.max||(ss.eventsSeen[id]||0)>0)return false;
+  if(scene.require==='job'&&!ss.jobId)return false;
+  if(scene.require==='kid'&&!children(me()).some(alive))return false;
+  if(scene.require==='friend'&&!friends().some(alive))return false;
+  if(scene.require==='school'&&ss.school==='home')return false;
+  return true;
+ }));
+}
+// Strange headlines belong among ordinary birthdays, not in every second year.
+const previousOddSelection=eventOptions;
+eventOptions=function(){
+ const normal=previousOddSelection();
+ if(!s)return normal;
+ // Scheduled chapters win priority over one-offs; a mystery should conclude.
+ if(normal?.priority||/^(?:kid_arc_|later_arc_|life_arc_)/.test(normal?.id||''))return normal;
+ const choices=events.filter(e=>e.id.startsWith('odd_')&&e.when(s));
+ const impossible=choices.filter(e=>ODD.scenes.some(x=>'odd_'+x.id===e.id&&x.rare));
+ const everyday=choices.filter(e=>!impossible.includes(e));
+ if(impossible.length&&prob(.002))return pick(impossible);
+ if(everyday.length&&prob(.36))return pick(everyday);
+ return normal||pick(everyday)||null;
+};
+// A choice may have more than one written success or setback. Resolve the actual
+// sentence at selection time, without altering the source data or saved event ID.
+const previousOddResolution=resolveEvent;
+resolveEvent=function(ev,choice,ctx){
+ if(ev.id?.startsWith('odd_')&&choice.winVariants){
+  const outcome={...choice,good:pick(choice.winVariants),bad:pick(choice.loseVariants)};
+  return previousOddResolution(ev,outcome,ctx);
+ }
+ return previousOddResolution(ev,choice,ctx);
+};
+
 // A persistent, multi-round scuffle, with consequences for *both* characters.
 // Fights stay serious enough to matter, even if a ridiculous detail occurs along the way.
 function encounterOpponent(){

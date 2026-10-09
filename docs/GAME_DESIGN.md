@@ -76,3 +76,9 @@ Life stages have different opportunities to change: baby personality emerges in 
 The test for a scene isn't "a relationship changed"; it's whether the player can remember **why** it changed. Secrets must have content. A rival must have a name. A missed opportunity needs a particular job, person or object. A fight can end with a cowardly exit, two people bruised and ashamed, a suspended aggressor, a costly injury, or a lucky escape. Bizarre moments belong next to ordinary joys and setbacks. A high skill helps, but isn't a guarantee.
 
 A readable outcome displays signed changes to skills, grades, reputation, health, cash, and *specific people*. Writers should aim for a distinctive setup, at least two substantially different actions, different successes and failures, follow-up memory, and a plausible chance of a bad result. Avoid violence as a source of easy popularity; injury and loss are non-graphic and never sexual. `tests/story_combat_smoke.py` is the browser contract for sticky aging, serial fights and consequence feedback.
+
+## Odd Corners: earned absurdity
+
+The weirdest stories work when something ordinary gives them a foothold: a school mascot ransom note, a pigeon treated as a paying tenant, a giant pie with no table large enough to support it, a hen winning a chess match. Players should have genuinely different ways of behaving inside each scene, not simply a good/bad morality button. A little failure may be the funniest outcome; a kind choice may lead to a minor mistake without punishing kindness.
+
+One-off stories should not hijack long-running mysteries in progress. Very rare time anomalies and cryptid sightings belong in a much smaller pool than the everyday jokes and mishaps. Follow-ups should quote the original person, object, lie, or triumph rather than vaguely mentioning "an old choice." Every event deserves to be worth reading aloud.
